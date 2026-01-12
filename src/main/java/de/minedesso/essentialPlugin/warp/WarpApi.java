@@ -1,7 +1,6 @@
-package de.minedesso.essentialPlugin.api.warp;
+package de.minedesso.essentialPlugin.warp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.minedesso.essentialPlugin.dto.WarpDto;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -61,7 +60,35 @@ public class WarpApi {
         }
     }
 
-    public boolean createWarp(WarpDto warpDto) {
+    public WarpDto fetchWarpByName(String name) {
+        try {
+            String encoded = URLEncoder.encode(name, StandardCharsets.UTF_8);
+            // URLEncoder encodes spaces as '+', replace with %20 for path segments
+            encoded = encoded.replace("+", "%20");
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl + "/warp/" + encoded))
+                    .GET()
+                    .header(HEADER_ACCEPT, APPLICATION_JSON)
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                return null;
+            }
+
+            // JSON -> Warp
+            return objectMapper.readValue(response.body(), WarpDto.class);
+        } catch (InterruptedException ie) {
+            // Restore interrupt status and propagate a neutral value
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean saveWarp(WarpDto warpDto) {
         try {
             String json = objectMapper.writeValueAsString(warpDto);
 
@@ -105,5 +132,4 @@ public class WarpApi {
             return false;
         }
     }
-
 }

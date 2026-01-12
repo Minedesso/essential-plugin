@@ -1,10 +1,12 @@
-package de.minedesso.essentialPlugin.dto;
+package de.minedesso.essentialPlugin.warp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import java.util.Objects;
 
 @AllArgsConstructor
 @Data
@@ -18,6 +20,17 @@ public class WarpDto {
     private double z;
     private float yaw;
     private float pitch;
+
+    public WarpDto(String name, String permission, Location location) {
+        this.name = name;
+        this.permission = permission;
+        this.worldName = Objects.requireNonNull(location.getWorld()).getName();
+        this.x = location.getX();
+        this.y = location.getY();
+        this.z = location.getZ();
+        this.yaw = location.getYaw();
+        this.pitch = location.getPitch();
+    }
 
     public Location toLocation() {
         World world = Bukkit.getWorld(this.worldName);
