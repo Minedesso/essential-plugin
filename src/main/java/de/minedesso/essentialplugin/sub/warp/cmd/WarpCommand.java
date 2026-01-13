@@ -1,7 +1,7 @@
-package de.minedesso.essentialPlugin.warp.cmd;
+package de.minedesso.essentialplugin.sub.warp.cmd;
 
-import de.minedesso.essentialPlugin.util.Messages;
-import de.minedesso.essentialPlugin.warp.WarpService;
+import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

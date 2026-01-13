@@ -1,4 +1,4 @@
-package de.minedesso.essentialPlugin.util;
+package de.minedesso.essentialplugin.util;
 
 import org.bukkit.command.CommandSender;
 

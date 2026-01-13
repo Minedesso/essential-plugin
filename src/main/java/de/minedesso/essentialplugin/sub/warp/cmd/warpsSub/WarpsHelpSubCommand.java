@@ -1,11 +1,11 @@
-package de.minedesso.essentialPlugin.warp.cmd.warpsSub;
+package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
-import de.minedesso.essentialPlugin.util.Messages;
-import de.minedesso.essentialPlugin.util.SubCommand;
-import de.minedesso.essentialPlugin.warp.WarpService;
+import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.SubCommand;
+import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.command.CommandSender;
 
-public class WarpHelpSubCommand implements SubCommand {
+public class WarpsHelpSubCommand implements SubCommand {
     @Override
     public String name() {
         return "help";

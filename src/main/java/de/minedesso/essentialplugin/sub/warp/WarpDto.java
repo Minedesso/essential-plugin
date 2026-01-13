@@ -1,4 +1,4 @@
-package de.minedesso.essentialPlugin.warp;
+package de.minedesso.essentialplugin.sub.warp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,14 +35,5 @@ public class WarpDto {
     public Location toLocation() {
         World world = Bukkit.getWorld(this.worldName);
         return new Location(world, x, y, z, yaw, pitch);
-    }
-
-    public void replaceLocation(Location location) {
-        this.worldName = Objects.requireNonNull(location.getWorld()).getName();
-        this.x = location.getX();
-        this.y = location.getY();
-        this.z = location.getZ();
-        this.yaw = location.getYaw();
-        this.pitch = location.getPitch();
     }
 }

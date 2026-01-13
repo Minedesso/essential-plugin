@@ -1,14 +1,11 @@
-package de.minedesso.essentialPlugin.util;
+package de.minedesso.essentialplugin.util;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-public abstract class HandleSubCommand {
-
-    private HandleSubCommand() {
-    }
+public class HandleSubCommand {
 
     public static boolean handleSubCommand(SubCommand sub, CommandSender sender, String label, String[] args) {
         if (sub == null) {

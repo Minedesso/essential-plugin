@@ -1,4 +1,4 @@
-package de.minedesso.essentialPlugin.warp;
+package de.minedesso.essentialplugin.sub.warp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

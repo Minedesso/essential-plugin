@@ -1,8 +1,8 @@
-package de.minedesso.essentialPlugin.warp.cmd;
+package de.minedesso.essentialplugin.sub.warp.cmd;
 
-import de.minedesso.essentialPlugin.util.HandleSubCommand;
-import de.minedesso.essentialPlugin.util.SubCommand;
-import de.minedesso.essentialPlugin.warp.WarpService;
+import de.minedesso.essentialplugin.util.HandleSubCommand;
+import de.minedesso.essentialplugin.util.SubCommand;
+import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ public class WarpsCommand implements CommandExecutor {
     private final Map<String, SubCommand> warpsSubCommands = new HashMap<>();
 
     public WarpsCommand(List<SubCommand> commands) {
-        commands.forEach((subCmd) -> {warpsSubCommands.put(subCmd.name(), subCmd);});
+        commands.forEach((subCmd) -> warpsSubCommands.put(subCmd.name(), subCmd));
     }
 
     @Override

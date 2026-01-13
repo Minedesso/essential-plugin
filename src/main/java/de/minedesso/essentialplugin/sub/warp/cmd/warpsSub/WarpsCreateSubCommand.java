@@ -1,17 +1,16 @@
-package de.minedesso.essentialPlugin.warp.cmd.warpsSub;
+package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
-import de.minedesso.essentialPlugin.exception.WarpAlreadyExistsException;
-import de.minedesso.essentialPlugin.exception.WarpCreateException;
-import de.minedesso.essentialPlugin.util.Messages;
-import de.minedesso.essentialPlugin.util.Permission;
-import de.minedesso.essentialPlugin.util.SubCommand;
-import de.minedesso.essentialPlugin.warp.WarpDto;
-import de.minedesso.essentialPlugin.warp.WarpService;
+import de.minedesso.essentialplugin.exception.warp.WarpAlreadyExistsException;
+import de.minedesso.essentialplugin.exception.warp.WarpCreateException;
+import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Permission;
+import de.minedesso.essentialplugin.util.SubCommand;
+import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class WarpCreateSubCommand implements SubCommand {
+public class WarpsCreateSubCommand implements SubCommand {
     @Override
     public String name() {
         return "create";
