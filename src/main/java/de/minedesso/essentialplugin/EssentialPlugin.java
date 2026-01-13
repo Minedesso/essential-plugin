@@ -1,13 +1,12 @@
 package de.minedesso.essentialplugin;
 
+import de.minedesso.essentialplugin.sub.inv.InvService;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
 
-@Slf4j
 public final class EssentialPlugin extends JavaPlugin {
 
     @Getter
@@ -30,6 +29,7 @@ public final class EssentialPlugin extends JavaPlugin {
         // Ensure WarpService initializes without relying on commands being present in plugin.yml
         try {
             WarpService.getInstance();
+            InvService.getInstance();
         } catch (Exception e) {
             getLogger().warning("Failed to initialize WarpService: " + e.getMessage());
         }
