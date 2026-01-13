@@ -2,7 +2,9 @@ package de.minedesso.essentialPlugin.warp;
 
 import de.minedesso.essentialPlugin.EssentialPlugin;
 import de.minedesso.essentialPlugin.exception.WarpAlreadyExistsException;
-import de.minedesso.essentialPlugin.exception.WarpsCreateException;
+import de.minedesso.essentialPlugin.exception.WarpDeleteException;
+import de.minedesso.essentialPlugin.exception.WarpDoesNotExistException;
+import de.minedesso.essentialPlugin.exception.WarpCreateException;
 import de.minedesso.essentialPlugin.util.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -83,9 +85,17 @@ public class WarpService {
 
     public void createWarp(WarpDto warp) {
         WarpDto warpDto = warpApi.fetchWarpByName(warp.getName());
-        if (warpDto != null) throw new WarpAlreadyExistsException();
+        if (warpDto != null) throw new WarpAlreadyExistsException(warp.getName());
 
         boolean success = warpApi.saveWarp(warp);
-        if(!success) throw new WarpsCreateException("Failed to create warp '" + warp.getName() + "'.");
+        if(!success) throw new WarpCreateException("Failed to create warp '" + warp.getName() + "'.");
+    }
+
+    public void deleteWarp(String warpName) {
+        WarpDto warpDto = warpApi.fetchWarpByName(warpName);
+        if (warpDto == null) throw new WarpDoesNotExistException(warpName);
+
+       boolean success = warpApi.deleteWarp(warpName);
+        if(!success) throw new WarpDeleteException("Failed to delete warp '" + warpName + "'.");
     }
 }

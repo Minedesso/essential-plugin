@@ -1,8 +1,9 @@
 package de.minedesso.essentialPlugin.warp.cmd.warpsSub;
 
 import de.minedesso.essentialPlugin.exception.WarpAlreadyExistsException;
-import de.minedesso.essentialPlugin.exception.WarpsCreateException;
+import de.minedesso.essentialPlugin.exception.WarpCreateException;
 import de.minedesso.essentialPlugin.util.Messages;
+import de.minedesso.essentialPlugin.util.Permission;
 import de.minedesso.essentialPlugin.util.SubCommand;
 import de.minedesso.essentialPlugin.warp.WarpDto;
 import de.minedesso.essentialPlugin.warp.WarpService;
@@ -18,7 +19,7 @@ public class WarpsCreateSubCommand implements SubCommand {
 
     @Override
     public String permission() {
-        return "essential.warp.create";
+        return Permission.WARP_CREATE.perm;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class WarpsCreateSubCommand implements SubCommand {
             player.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' created successfully.");
         } catch (WarpAlreadyExistsException e) {
             player.sendMessage(Messages.PREFIX.message + e.getMessage());
-        } catch (WarpsCreateException e) {
+        } catch (WarpCreateException e) {
             player.sendMessage(Messages.ERROR.message + e.getMessage());
         }
     }
