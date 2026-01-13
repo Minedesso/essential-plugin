@@ -11,7 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class WarpsCreateSubCommand implements SubCommand {
+public class WarpCreateSubCommand implements SubCommand {
     @Override
     public String name() {
         return "create";
@@ -30,17 +30,19 @@ public class WarpsCreateSubCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        if(args.length != 1) {
-            player.sendMessage(Messages.USAGE.message + "/warps create <warpname>");
+        if(args.length != 1 && args.length != 2) {
+            player.sendMessage(Messages.USAGE.message + "/warps create <warpname> <permission>");
             return;
         }
 
         try {
             String warpName = args[0].toLowerCase();
-            Location location = player.getLocation();
-            WarpDto warpDto = new WarpDto(warpName, null, location);
+            String permission = null;
+            if(args.length == 2) permission = Permission.WARP_USE.perm + args[1];
 
-            WarpService.getInstance().createWarp(warpDto);
+            Location location = player.getLocation();
+
+            WarpService.getInstance().createWarp(warpName, permission, location, player);
             player.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' created successfully.");
         } catch (WarpAlreadyExistsException e) {
             player.sendMessage(Messages.PREFIX.message + e.getMessage());

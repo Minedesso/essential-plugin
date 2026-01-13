@@ -5,7 +5,7 @@ import de.minedesso.essentialPlugin.util.SubCommand;
 import de.minedesso.essentialPlugin.warp.WarpService;
 import org.bukkit.command.CommandSender;
 
-public class WarpsHelpSubCommand implements SubCommand {
+public class WarpHelpSubCommand implements SubCommand {
     @Override
     public String name() {
         return "help";

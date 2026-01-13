@@ -8,7 +8,7 @@ import de.minedesso.essentialPlugin.util.SubCommand;
 import de.minedesso.essentialPlugin.warp.WarpService;
 import org.bukkit.command.CommandSender;
 
-public class WarpsDeleteSubCommand implements SubCommand {
+public class WarpDeleteSubCommand implements SubCommand {
     @Override
     public String name() {
         return "delete";

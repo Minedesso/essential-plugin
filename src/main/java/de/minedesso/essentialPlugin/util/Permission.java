@@ -1,9 +1,10 @@
 package de.minedesso.essentialPlugin.util;
 
 public enum Permission {
-    WARP_USE("essential.warp."),
-    WARP_CREATE("essential.warp.create"),
-    WARP_DELETE("essential.warp.delete");
+    WARP_BASE("essential.warp."),
+    WARP_USE(WARP_BASE.perm + "use."),
+    WARP_CREATE(WARP_BASE.perm + "create"),
+    WARP_DELETE(WARP_BASE.perm + "delete"),;
 
     public final String perm;
 

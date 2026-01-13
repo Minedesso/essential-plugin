@@ -7,6 +7,7 @@ import de.minedesso.essentialPlugin.exception.WarpDoesNotExistException;
 import de.minedesso.essentialPlugin.exception.WarpCreateException;
 import de.minedesso.essentialPlugin.util.Messages;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -83,12 +84,13 @@ public class WarpService {
         sender.sendMessage(warpList.append(border).toString());
     }
 
-    public void createWarp(WarpDto warp) {
-        WarpDto warpDto = warpApi.fetchWarpByName(warp.getName());
-        if (warpDto != null) throw new WarpAlreadyExistsException(warp.getName());
+    public void createWarp(String warpName, String permission, Location location, Player player) {
+        WarpDto warpDto = warpApi.fetchWarpByName(warpName);
+        if(warpDto != null) player.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' already exists. Updating warp instead.");
+        WarpDto newWarpDto = new WarpDto(warpName, permission, location);
 
-        boolean success = warpApi.saveWarp(warp);
-        if(!success) throw new WarpCreateException("Failed to create warp '" + warp.getName() + "'.");
+        boolean success = warpApi.saveWarp(newWarpDto);
+        if(!success) throw new WarpCreateException("Failed to create warp '" + warpName + "'.");
     }
 
     public void deleteWarp(String warpName) {
