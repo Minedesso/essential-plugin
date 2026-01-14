@@ -1,9 +1,9 @@
 package de.minedesso.essentialplugin.sub.warp;
 
 import de.minedesso.essentialplugin.EssentialPlugin;
-import de.minedesso.essentialplugin.exception.warp.WarpCreateException;
-import de.minedesso.essentialplugin.exception.warp.WarpDeleteException;
-import de.minedesso.essentialplugin.exception.warp.WarpDoesNotExistException;
+import de.minedesso.essentialplugin.exception.CouldNotCreateException;
+import de.minedesso.essentialplugin.exception.CouldNotDeleteException;
+import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.sub.warp.cmd.WarpCommand;
 import de.minedesso.essentialplugin.sub.warp.cmd.WarpsCommand;
 import de.minedesso.essentialplugin.sub.warp.cmd.warpsSub.WarpsCreateSubCommand;
@@ -124,14 +124,14 @@ public class WarpService {
         WarpDto newWarpDto = new WarpDto(warpName, permission, location);
 
         boolean success = warpApi.saveWarp(newWarpDto);
-        if (!success) throw new WarpCreateException("Failed to create warp '" + warpName + "'.");
+        if (!success) throw new CouldNotCreateException("Failed to create warp '" + warpName + "'.");
     }
 
     public void deleteWarp(String warpName) {
         WarpDto warpDto = warpApi.fetchWarpByName(warpName);
-        if (warpDto == null) throw new WarpDoesNotExistException(warpName);
+        if (warpDto == null) throw new DoesNotExistException("Warp " + warpName + " does not exist.");
 
         boolean success = warpApi.deleteWarp(warpName);
-        if (!success) throw new WarpDeleteException("Failed to delete warp '" + warpName + "'.");
+        if (!success) throw new CouldNotDeleteException("Failed to delete warp '" + warpName + "'.");
     }
 }

@@ -1,7 +1,7 @@
 package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
-import de.minedesso.essentialplugin.exception.warp.WarpDeleteException;
-import de.minedesso.essentialplugin.exception.warp.WarpDoesNotExistException;
+import de.minedesso.essentialplugin.exception.CouldNotDeleteException;
+import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.util.Messages;
 import de.minedesso.essentialplugin.util.Permission;
 import de.minedesso.essentialplugin.util.SubCommand;
@@ -36,9 +36,9 @@ public class WarpsDeleteSubCommand implements SubCommand {
 
             WarpService.getInstance().deleteWarp(warpName);
             sender.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' deleted successfully.");
-        } catch (WarpDoesNotExistException e) {
+        } catch (DoesNotExistException e) {
             sender.sendMessage(Messages.PREFIX.message + e.getMessage());
-        } catch (WarpDeleteException e) {
+        } catch (CouldNotDeleteException e) {
             sender.sendMessage(Messages.ERROR.message + e.getMessage());
         }
     }

@@ -1,7 +1,7 @@
 package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
-import de.minedesso.essentialplugin.exception.warp.WarpAlreadyExistsException;
-import de.minedesso.essentialplugin.exception.warp.WarpCreateException;
+import de.minedesso.essentialplugin.exception.AlreadyExistsException;
+import de.minedesso.essentialplugin.exception.CouldNotCreateException;
 import de.minedesso.essentialplugin.util.Messages;
 import de.minedesso.essentialplugin.util.Permission;
 import de.minedesso.essentialplugin.util.SubCommand;
@@ -43,9 +43,9 @@ public class WarpsCreateSubCommand implements SubCommand {
 
             WarpService.getInstance().createWarp(warpName, permission, location, player);
             player.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' created successfully.");
-        } catch (WarpAlreadyExistsException e) {
+        } catch (AlreadyExistsException e) {
             player.sendMessage(Messages.PREFIX.message + e.getMessage());
-        } catch (WarpCreateException e) {
+        } catch (CouldNotCreateException e) {
             player.sendMessage(Messages.ERROR.message + e.getMessage());
         }
     }
