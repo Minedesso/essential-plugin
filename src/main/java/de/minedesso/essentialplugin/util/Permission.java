@@ -10,7 +10,10 @@ public enum Permission {
 
     INV_BASE(ESSENTIAL_BASE.perm + "inv."),
     INV_SEE(INV_BASE.perm + "see"),
-    INV_EC(INV_BASE.perm + "ec");
+    INV_EC(INV_BASE.perm + "ec"),
+
+    HOME_BASE(ESSENTIAL_BASE.perm + "home."),
+    HOME_COUNT(HOME_BASE.perm + "count.");
 
     public final String perm;
 
