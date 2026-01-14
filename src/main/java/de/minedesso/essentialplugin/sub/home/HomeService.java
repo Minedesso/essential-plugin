@@ -7,6 +7,7 @@ import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.sub.home.cmd.HomeBaseCommand;
 import de.minedesso.essentialplugin.sub.home.cmd.sub.DelHomeCommand;
 import de.minedesso.essentialplugin.sub.home.cmd.sub.HomeCommand;
+import de.minedesso.essentialplugin.sub.home.cmd.sub.HomesCommand;
 import de.minedesso.essentialplugin.sub.home.cmd.sub.SetHomeCommand;
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.Permission;
@@ -96,7 +97,8 @@ public class HomeService {
         HomeBaseCommand homeBaseCommand = new HomeBaseCommand(List.of(
                 new HomeCommand(),
                 new SetHomeCommand(),
-                new DelHomeCommand()
+                new DelHomeCommand(),
+                new HomesCommand()
         ));
 
         EssentialPlugin plugin = EssentialPlugin.getInstance();

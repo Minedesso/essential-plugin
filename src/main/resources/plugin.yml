@@ -16,4 +16,4 @@ commands:
   home:
     description: Teleport to your home location.
     usage: /home
-    aliases: [sethome, delhome]
+    aliases: [sethome, delhome, homes]
