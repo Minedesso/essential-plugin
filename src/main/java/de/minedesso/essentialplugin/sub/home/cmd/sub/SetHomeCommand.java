@@ -37,6 +37,8 @@ public class SetHomeCommand implements SubCommand {
             player.sendMessage(Message.PREFIX.message + "Home '" + homeName + "' set successfully.");
         } catch (AlreadyExistsException e) {
             player.sendMessage(Message.PREFIX.message + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            player.sendMessage(Message.ERROR.message + e.getMessage());
         }
     }
 }

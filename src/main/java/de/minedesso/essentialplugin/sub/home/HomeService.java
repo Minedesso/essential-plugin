@@ -35,6 +35,8 @@ public class HomeService {
     }
 
     public void setHome(UUID ownerUuid, String name, Location location) {
+        validateHomeName(name);
+
         Optional<HomeDto> homeDto = getHome(ownerUuid, name);
         if(homeDto.isPresent()) throw new AlreadyExistsException("Home with name " + name + " already exists!");
 
@@ -92,5 +94,17 @@ public class HomeService {
 
         EssentialPlugin plugin = EssentialPlugin.getInstance();
         plugin.getCommand("home").setExecutor(homeBaseCommand);
+    }
+
+    private void validateHomeName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Home name cannot be null or empty.");
+        }
+        if (name.length() > 16) {
+            throw new IllegalArgumentException("Home name cannot exceed 16 characters.");
+        }
+        if (!name.matches("^[a-zA-Z0-9_]+$")) {
+            throw new IllegalArgumentException("Home name can only contain alphanumeric characters and underscores.");
+        }
     }
 }
