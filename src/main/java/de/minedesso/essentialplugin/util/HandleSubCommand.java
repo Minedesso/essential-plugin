@@ -19,7 +19,7 @@ public class HandleSubCommand {
         }
 
         if (sub.permission() != null && !sender.hasPermission(sub.permission())) {
-            sender.sendMessage(Messages.NO_PERMISSION.message);
+            sender.sendMessage(Message.NO_PERMISSION.message);
             return true;
         }
 

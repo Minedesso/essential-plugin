@@ -13,3 +13,7 @@ commands:
     description: View another player's inventory.
     usage: /inv <player>
     aliases: [ec]
+  home:
+    description: Teleport to your home location.
+    usage: /home
+    aliases: [sethome, delhome]

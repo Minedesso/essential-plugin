@@ -1,7 +1,13 @@
 package de.minedesso.essentialplugin.sub.home;
 
+import de.minedesso.essentialplugin.EssentialPlugin;
 import de.minedesso.essentialplugin.exception.AlreadyExistsException;
 import de.minedesso.essentialplugin.exception.DoesNotExistException;
+import de.minedesso.essentialplugin.sub.home.cmd.HomeBaseCommand;
+import de.minedesso.essentialplugin.sub.home.cmd.sub.DelHomeCommand;
+import de.minedesso.essentialplugin.sub.home.cmd.sub.HomeCommand;
+import de.minedesso.essentialplugin.sub.home.cmd.sub.SetHomeCommand;
+import de.minedesso.essentialplugin.util.Message;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,6 +30,8 @@ public class HomeService {
 
     private HomeService() {
         this.homeApi = HomeApi.getInstance();
+
+        initializeCommands();
     }
 
     public void setHome(UUID ownerUuid, String name, Location location) {
@@ -45,7 +53,7 @@ public class HomeService {
         return homeApi.fetchHomeByNameAndOwnerUuid(name, ownerUuid);
     }
 
-    public Optional<List<HomeDto>> getHomes(UUID ownerUuid) {
+    public List<HomeDto> getHomes(UUID ownerUuid) {
         return homeApi.fetchHomesByOwnerUuid(ownerUuid);
     }
 
@@ -60,4 +68,29 @@ public class HomeService {
         player.playSound(player.getLocation(), Sound.ENTITY_ENDER_PEARL_THROW, 1f, 1f);
     }
 
+    public void displayHomes(Player player) {
+        List<HomeDto> homes = getHomes(player.getUniqueId());
+
+        StringBuilder homeList = new StringBuilder(Message.PREFIX.message + "Homes: ");
+        for (HomeDto home : homes) {
+            homeList.append(home.getName()).append(", ");
+        }
+        if (homeList.length() > 2) {
+            homeList.setLength(homeList.length() - 2); // Remove trailing comma and space
+        } else {
+            homeList.append("None");
+        }
+        player.sendMessage(homeList.toString());
+    }
+
+    private void initializeCommands() {
+        HomeBaseCommand homeBaseCommand = new HomeBaseCommand(List.of(
+                new HomeCommand(),
+                new SetHomeCommand(),
+                new DelHomeCommand()
+        ));
+
+        EssentialPlugin plugin = EssentialPlugin.getInstance();
+        plugin.getCommand("home").setExecutor(homeBaseCommand);
+    }
 }

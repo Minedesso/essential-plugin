@@ -1,6 +1,6 @@
 package de.minedesso.essentialplugin.sub.warp.cmd;
 
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,7 +16,7 @@ public class WarpCommand implements CommandExecutor {
         }
 
         if(args.length != 1) {
-            player.sendMessage(Messages.USAGE.message + "/warp <warpname> | /warps to list warps.");
+            player.sendMessage(Message.USAGE.message + "/warp <warpname> | /warps to list warps.");
             return true;
         }
 
