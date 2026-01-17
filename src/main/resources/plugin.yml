@@ -1,15 +1,4 @@
 name: essential-plugin
 version: '1.0-SNAPSHOT'
-main: de.minedesso.essentialplugin.EssentialPlugin
+main: de.minedesso.essentialPlugin.EssentialPlugin
 api-version: '1.21'
-commands:
-  warp:
-    description: Teleport to a predefined location.
-    usage: /warp <location>
-  warps:
-    description: List all available warp locations.
-    usage: /warps
-  inv:
-    description: View another player's inventory.
-    usage: /inv <player>
-    aliases: [ec]
