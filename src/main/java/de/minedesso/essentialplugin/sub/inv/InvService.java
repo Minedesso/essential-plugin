@@ -2,6 +2,8 @@ package de.minedesso.essentialplugin.sub.inv;
 
 import de.minedesso.essentialplugin.EssentialPlugin;
 import de.minedesso.essentialplugin.sub.inv.cmd.InvBaseCommand;
+import de.minedesso.essentialplugin.sub.inv.cmd.invSub.EcCommand;
+import de.minedesso.essentialplugin.sub.inv.cmd.invSub.InvCommand;
 import de.minedesso.essentialplugin.util.Messages;
 import org.bukkit.entity.Player;
 
