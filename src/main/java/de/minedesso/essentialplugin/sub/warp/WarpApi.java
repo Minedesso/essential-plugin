@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class WarpApi {
 
@@ -60,7 +61,7 @@ public class WarpApi {
         }
     }
 
-    public WarpDto fetchWarpByName(String name) {
+    public Optional<WarpDto> fetchWarpByName(String name) {
         try {
             String encoded = URLEncoder.encode(name, StandardCharsets.UTF_8);
             // URLEncoder encodes spaces as '+', replace with %20 for path segments
@@ -74,17 +75,17 @@ public class WarpApi {
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                return null;
+                return Optional.empty();
             }
 
             // JSON -> Warp
-            return objectMapper.readValue(response.body(), WarpDto.class);
+            return Optional.of(objectMapper.readValue(response.body(), WarpDto.class));
         } catch (InterruptedException ie) {
             // Restore interrupt status and propagate a neutral value
             Thread.currentThread().interrupt();
-            return null;
+            return Optional.empty();
         } catch (Exception e) {
-            return null;
+            return Optional.empty();
         }
     }
 

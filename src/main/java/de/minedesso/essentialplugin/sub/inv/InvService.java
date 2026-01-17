@@ -1,7 +1,7 @@
 package de.minedesso.essentialplugin.sub.inv;
 
 import de.minedesso.essentialplugin.EssentialPlugin;
-import de.minedesso.essentialplugin.sub.inv.cmd.invSub.EcCommand;
+import de.minedesso.essentialplugin.sub.inv.cmd.invSub.EnderChestCommand;
 import de.minedesso.essentialplugin.sub.inv.cmd.InvBaseCommand;
 import de.minedesso.essentialplugin.sub.inv.cmd.invSub.InvCommand;
 import de.minedesso.essentialplugin.util.Message;
@@ -13,20 +13,21 @@ public class InvService {
 
     private static InvService instance;
 
-    private InvService() {
-        initializeWarpCommands();
-    }
 
     private void initializeWarpCommands() {
         InvBaseCommand baseCmd = new InvBaseCommand(List.of(
                 new InvCommand(),
-                new EcCommand()
+                new EnderChestCommand()
         ));
 
         EssentialPlugin plugin = EssentialPlugin.getInstance();
         if (plugin.getCommand("inv") != null) {
             plugin.getCommand("inv").setExecutor(baseCmd);
         }
+    }
+
+    private InvService() {
+        initializeWarpCommands();
     }
 
     public static InvService getInstance() {

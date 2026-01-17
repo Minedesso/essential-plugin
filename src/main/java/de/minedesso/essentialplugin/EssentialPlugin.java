@@ -33,7 +33,7 @@ public final class EssentialPlugin extends JavaPlugin {
             InvService.getInstance();
             HomeService.getInstance();
         } catch (Exception e) {
-            getLogger().warning("Failed to initialize WarpService: " + e.getMessage());
+            logger.warning("Failed to initialize WarpService: " + e.getMessage());
         }
     }
 }

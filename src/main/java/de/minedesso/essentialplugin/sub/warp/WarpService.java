@@ -17,15 +17,13 @@ import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class WarpService {
 
     private static WarpService instance;
     private final WarpApi warpApi;
-    private final Set<Player> cooldownPlayers = new HashSet<>();
+    private final Set<UUID> cooldownPlayers = new HashSet<>();
 
     private static final int COOLDOWN_SECONDS = 5;
 
@@ -45,9 +43,9 @@ public class WarpService {
     public void teleportToWarp(Player player, String warpName) {
         handleCooldown(player);
 
-        WarpDto warpDto = warpApi.fetchWarpByName(warpName);
-        if (warpDto != null && player.hasPermission(warpDto.getPermission())) {
-            player.teleport(warpDto.toLocation());
+        Optional<WarpDto> warpDto = warpApi.fetchWarpByName(warpName);
+        if (warpDto.isPresent() && player.hasPermission(warpDto.get().getPermission())) {
+            player.teleport(warpDto.get().toLocation());
             player.sendMessage(Message.PREFIX.message + "Teleported to warp '" + warpName + "'.");
         } else {
             player.sendMessage(Message.PREFIX.message + "Warp '" + warpName + "' does not exist.");
@@ -89,8 +87,8 @@ public class WarpService {
     }
 
     public void createWarp(String warpName, String permission, Location location, Player player) {
-        WarpDto warpDto = warpApi.fetchWarpByName(warpName);
-        if (warpDto != null) player.sendMessage(Message.PREFIX.message + "Warp '" + warpName + "' already exists. Updating warp instead.");
+        Optional<WarpDto> warpDto = warpApi.fetchWarpByName(warpName);
+        if (warpDto.isPresent()) player.sendMessage(Message.PREFIX.message + "Warp '" + warpName + "' already exists. Updating warp instead.");
         WarpDto newWarpDto = new WarpDto(warpName, permission, location);
 
         boolean success = warpApi.saveWarp(newWarpDto);
@@ -98,23 +96,23 @@ public class WarpService {
     }
 
     public void deleteWarp(String warpName) {
-        WarpDto warpDto = warpApi.fetchWarpByName(warpName);
-        if (warpDto == null) throw new DoesNotExistException("Warp " + warpName + " does not exist.");
+        Optional<WarpDto> warpDto = warpApi.fetchWarpByName(warpName);
+        if (warpDto.isEmpty()) throw new DoesNotExistException("Warp " + warpName + " does not exist.");
 
         boolean success = warpApi.deleteWarp(warpName);
         if (!success) throw new CouldNotDeleteException("Failed to delete warp '" + warpName + "'.");
     }
 
     private void handleCooldown(Player player) {
-        if(cooldownPlayers.contains(player)) {
+        if(cooldownPlayers.contains(player.getUniqueId())) {
             player.sendMessage(Message.PREFIX.message + "You must wait " + COOLDOWN_SECONDS + " seconds before using another warp.");
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
             return;
         }
 
-        cooldownPlayers.add(player);
+        cooldownPlayers.add(player.getUniqueId());
         Bukkit.getScheduler().scheduleSyncDelayedTask(EssentialPlugin.getInstance(), () -> {
-            cooldownPlayers.remove(player);
+            cooldownPlayers.remove(player.getUniqueId());
         }, COOLDOWN_SECONDS * 20L);
     }
 
