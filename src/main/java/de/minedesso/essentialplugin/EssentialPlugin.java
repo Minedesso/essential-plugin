@@ -1,5 +1,6 @@
 package de.minedesso.essentialplugin;
 
+import de.minedesso.essentialplugin.sub.home.HomeService;
 import de.minedesso.essentialplugin.sub.inv.InvService;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
 import lombok.Getter;
@@ -30,8 +31,9 @@ public final class EssentialPlugin extends JavaPlugin {
         try {
             WarpService.getInstance();
             InvService.getInstance();
+            HomeService.getInstance();
         } catch (Exception e) {
-            getLogger().warning("Failed to initialize WarpService: " + e.getMessage());
+            logger.warning("Failed to initialize WarpService: " + e.getMessage());
         }
     }
 }

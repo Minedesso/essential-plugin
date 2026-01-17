@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class EcCommand  implements SubCommand {
+public class EnderChestCommand implements SubCommand {
     @Override
     public String name() {
         return "ec";
