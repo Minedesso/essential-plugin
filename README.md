@@ -17,6 +17,7 @@ Berechtigungssteuerung und erweiterbaren kommandobasierten Interaktionen.
 | `/warps`               | Liste alle Warps auf                 | `(essential.warp.<name>)` | `-`     |
 | `/inv`                 | Zeige das Inventar des Spielers an   | `essential.inv.see`       | `-`     |
 | `/ec`                  | Zeige die Endertruhe des Spielers an | `essential.inv.ec`        | `-`     |
+| `/pay`                 | Bezahle einen anderen Spieler        | `-`                       | `-`     |
 
 ---
 

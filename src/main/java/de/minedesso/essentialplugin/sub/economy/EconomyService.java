@@ -5,16 +5,18 @@ import de.minedesso.essentialplugin.exception.InvalidAmountException;
 import de.minedesso.essentialplugin.exception.InvalidBeneficiaryException;
 import de.minedesso.essentialplugin.sub.economy.cmd.PayCommand;
 import de.minedesso.essentialplugin.sub.economy.dto.*;
+import de.minedesso.essentialplugin.util.HandleCooldownUtil;
 import de.minedesso.essentialplugin.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
-
 public class EconomyService {
 
     private static EconomyService instance;
-    private EconomyApi economyApi;
+    private final EconomyApi economyApi;
+    private final HandleCooldownUtil handleCooldownUtil;
+
+    private static final int COOLDOWN_SECONDS = 5;
 
     public static EconomyService getInstance() {
         if (instance == null) {
@@ -26,6 +28,7 @@ public class EconomyService {
     private EconomyService() {
         initializeCommands();
         economyApi = EconomyApi.getInstance();
+        handleCooldownUtil = new HandleCooldownUtil(COOLDOWN_SECONDS);
     }
 
     public void pay(Player player, String receiverName, String amountString) {
@@ -55,6 +58,8 @@ public class EconomyService {
                     receiver.sendMessage(Message.PREFIX.message + "&aYou have received " + amount + " from " + player.getName());
                     receiver.sendMessage(Message.PREFIX.message + "&a+ " + amount + "€");
                 }
+
+                handleCooldownUtil.handleCooldown(player.getUniqueId());
             }
             case INSUFFICIENT_FUNDS -> throw new InvalidAmountException("Insufficient funds to complete the transaction.");
             case RECEIVER_NOT_FOUND -> throw new InvalidBeneficiaryException("Receiver not found.");

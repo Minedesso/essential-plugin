@@ -9,21 +9,21 @@ import de.minedesso.essentialplugin.sub.warp.cmd.WarpsCommand;
 import de.minedesso.essentialplugin.sub.warp.cmd.warpsSub.WarpsCreateSubCommand;
 import de.minedesso.essentialplugin.sub.warp.cmd.warpsSub.WarpsDeleteSubCommand;
 import de.minedesso.essentialplugin.sub.warp.cmd.warpsSub.WarpsHelpSubCommand;
+import de.minedesso.essentialplugin.util.HandleCooldownUtil;
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.Permission;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public class WarpService {
 
     private static WarpService instance;
     private final WarpApi warpApi;
-    private final Set<UUID> cooldownPlayers = new HashSet<>();
+    private final HandleCooldownUtil handleCooldownUtil;
 
     private static final int COOLDOWN_SECONDS = 5;
 
@@ -36,12 +36,13 @@ public class WarpService {
 
     private WarpService() {
         this.warpApi = WarpApi.getInstance();
+        this.handleCooldownUtil = new HandleCooldownUtil(COOLDOWN_SECONDS);
 
         initializeWarpCommands();
     }
 
     public void teleportToWarp(Player player, String warpName) {
-        handleCooldown(player);
+        handleCooldownUtil.handleCooldown(player.getUniqueId());
 
         Optional<WarpDto> warpDto = warpApi.fetchWarpByName(warpName);
         if (warpDto.isPresent() && player.hasPermission(warpDto.get().getPermission())) {
@@ -101,19 +102,6 @@ public class WarpService {
 
         boolean success = warpApi.deleteWarp(warpName);
         if (!success) throw new CouldNotDeleteException("Failed to delete warp '" + warpName + "'.");
-    }
-
-    private void handleCooldown(Player player) {
-        if(cooldownPlayers.contains(player.getUniqueId())) {
-            player.sendMessage(Message.PREFIX.message + "You must wait " + COOLDOWN_SECONDS + " seconds before using another warp.");
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
-            return;
-        }
-
-        cooldownPlayers.add(player.getUniqueId());
-        Bukkit.getScheduler().scheduleSyncDelayedTask(EssentialPlugin.getInstance(), () -> {
-            cooldownPlayers.remove(player.getUniqueId());
-        }, COOLDOWN_SECONDS * 20L);
     }
 
     private void initializeWarpCommands() {

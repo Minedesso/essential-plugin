@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-public class HandleSubCommand {
+public class HandleSubCommandUtil {
 
     public static boolean handleSubCommand(SubCommand sub, CommandSender sender, String label, String[] args) {
         if (sub == null) {
