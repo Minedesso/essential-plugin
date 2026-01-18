@@ -3,6 +3,7 @@ package de.minedesso.essentialplugin.sub.economy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.minedesso.essentialplugin.sub.economy.dto.PayDto;
+import de.minedesso.essentialplugin.sub.economy.dto.PayOfflineDto;
 import de.minedesso.essentialplugin.sub.economy.dto.PayResponse;
 
 import java.net.URI;
@@ -58,16 +59,12 @@ public class EconomyApi {
         }
     }
 
-    public PayResponse payOfflinePlayer(PayDto payDto, String receiverName) {
+    public PayResponse payOfflinePlayer(PayOfflineDto payOfflineDto) {
         try {
-            String json = objectMapper.writeValueAsString(payDto);
-
-            String encoded = URLEncoder.encode(receiverName, StandardCharsets.UTF_8);
-            // URLEncoder encodes spaces as '+', replace with %20 for path segments
-            encoded = encoded.replace("+", "%20");
+            String json = objectMapper.writeValueAsString(payOfflineDto);
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl + "/pay/offline/" + encoded))
+                    .uri(URI.create(apiUrl + "/pay/offline"))
                     .header(HEADER_CONTENT_TYPE, APPLICATION_JSON)
                     .header(HEADER_ACCEPT, APPLICATION_JSON)
                     .POST(HttpRequest.BodyPublishers.ofString(json))
@@ -79,31 +76,6 @@ public class EconomyApi {
             return PayResponse.ERROR;
         } catch (Exception e) {
             return PayResponse.ERROR;
-        }
-    }
-
-    public Optional<Integer> fetchBalance(UUID uniqueId) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(apiUrl + "/balance/" + uniqueId.toString()))
-                    .header(HEADER_ACCEPT, APPLICATION_JSON)
-                    .GET()
-                    .build();
-
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            int status = response.statusCode();
-            if (status == 200) {
-                String responseBody = response.body();
-                Integer balance = objectMapper.readValue(responseBody, Integer.class);
-                return Optional.ofNullable(balance);
-            } else {
-                return Optional.empty();
-            }
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            return Optional.empty();
-        } catch (Exception e) {
-            return Optional.empty();
         }
     }
 

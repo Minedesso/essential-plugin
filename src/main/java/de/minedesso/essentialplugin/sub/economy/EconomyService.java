@@ -39,14 +39,17 @@ public class EconomyService {
         Player receiver = Bukkit.getPlayer(receiverName);
         int amount = validateAmount(amountString);
 
-        TransactionContext context = new TransactionContext(TransactionType.PAY, TransactionSource.PLAYER);
-        PayDto payDto = new PayDto(player.getUniqueId(), null, amount, context);
+        TransactionContext context = new TransactionContext(TransactionType.PAY,
+                TransactionSource.PLAYER);
 
         PayResponse payResponse;
         if(receiver == null) {
-            payResponse = economyApi.payOfflinePlayer(payDto, receiverName);
+            PayOfflineDto payOfflineDto = new PayOfflineDto(player.getUniqueId(),
+                    receiverName, amount, context);
+            payResponse = economyApi.payOfflinePlayer(payOfflineDto);
         } else {
-            payDto.setReceiver(receiver.getUniqueId());
+            PayDto payDto = new PayDto(player.getUniqueId(),
+                    receiver.getUniqueId(), amount, context);
             payResponse = economyApi.pay(payDto);
         }
 
