@@ -85,7 +85,7 @@ public class EconomyApi {
 
         return switch (status) {
             case 200, 201 -> PayResponse.SUCCESS;
-            case 400 -> PayResponse.INSUFFICIENT_FUNDS;
+            case 409 -> PayResponse.INSUFFICIENT_FUNDS;
             case 404 -> PayResponse.RECEIVER_NOT_FOUND;
             default -> PayResponse.ERROR;
         };
