@@ -13,3 +13,7 @@ commands:
     description: View another player's inventory.
     usage: /inv <player>
     aliases: [ec]
+  tpa:
+    description: Send a teleportation request to another player.
+    usage: /tpa <player>
+    aliases: [tpaccept, tpdeny, tpcancel, tphelp]

@@ -17,6 +17,10 @@ permission control, and extensible command-based interactions.
 | `/warps`               | Liste alle Warps auf                 | `(essential.warp.<name>)` | `-`     |
 | `/inv`                 | Zeige das Inventar des Spielers an   | `essential.inv.see`       | `-`     |
 | `/ec`                  | Zeige die Endertruhe des Spielers an | `essential.inv.ec`        | `-`     |
+| `/tpa <player>`        | Schickt eine Teleportationsanfrage   |                           | `-`     |
+| `/tpaccept <player>`   | Akzeptiert Teleportationsanfrage     |                           | `-`     |
+| `/tpdeny <player>`     | Lehnt Teleportationsanfrage ab       |                           | `-`     |
+| `/tpacancel`           | Zieht Teleportationsanfrage zurück   |                           | `-`     |
 
 ---
 

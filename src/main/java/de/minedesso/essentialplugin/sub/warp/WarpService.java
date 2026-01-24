@@ -20,12 +20,13 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class WarpService {
 
     private static WarpService instance;
     private final WarpApi warpApi;
-    private final Set<Player> cooldownPlayers = new HashSet<>();
+    private final Set<UUID> cooldownPlayers = new HashSet<>();
 
     private static final int COOLDOWN_SECONDS = 5;
 
@@ -72,15 +73,15 @@ public class WarpService {
     }
 
     private void handleCooldown(Player player) {
-        if(cooldownPlayers.contains(player)) {
+        if(cooldownPlayers.contains(player.getUniqueId())) {
             player.sendMessage(Messages.PREFIX.message + "You must wait " + COOLDOWN_SECONDS + " seconds before using another warp.");
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
             return;
         }
 
-        cooldownPlayers.add(player);
+        cooldownPlayers.add(player.getUniqueId());
         Bukkit.getScheduler().scheduleSyncDelayedTask(EssentialPlugin.getInstance(), () -> {
-            cooldownPlayers.remove(player);
+            cooldownPlayers.remove(player.getUniqueId());
         }, COOLDOWN_SECONDS * 20L);
     }
 
