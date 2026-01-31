@@ -24,6 +24,10 @@ public class TpHelpCommand implements SubCommand {
             sender.sendMessage(Messages.USAGE.message + "/tphelp");
             return;
         }
+        if (args.length > 0) {
+            sender.sendMessage(Messages.USAGE.message + "/tphelp");
+            return;
+        }
         TpaService.getInstance().displayHelp(sender);
     }
 }
