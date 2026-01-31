@@ -20,6 +20,10 @@ public class TpHelpCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (args.length > 0) {
+            sender.sendMessage(Messages.USAGE.message + "/tphelp");
+            return;
+        }
         TpaService.getInstance().displayHelp(sender);
     }
 }
