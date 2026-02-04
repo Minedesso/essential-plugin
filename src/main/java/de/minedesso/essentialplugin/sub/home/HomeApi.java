@@ -54,7 +54,7 @@ public class HomeApi {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
             if (!(status == 200 || status == 201)) {
-                throw new CouldNotCreateException("Failed to create home: HTTP " + status + " - " + response.body());
+                throw new CouldNotCreateException("Failed to create home: " + homeDto.getName());
             }
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
@@ -80,7 +80,7 @@ public class HomeApi {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             int status = response.statusCode();
             if (!(status == 200 || status == 204)) {
-                throw new CouldNotDeleteException("Failed to delete home: HTTP " + status + " - " + response.body());
+                throw new CouldNotDeleteException("Failed to delete home: " + homeDto.getName());
             }
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();

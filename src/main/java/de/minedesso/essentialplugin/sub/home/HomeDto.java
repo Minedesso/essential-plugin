@@ -10,8 +10,8 @@ import java.util.UUID;
 @Data
 public class HomeDto {
 
-    UUID ownerUuid;
-    String name;
+    private UUID ownerUuid;
+    private String name;
 
     private String worldName;
     private double x;
