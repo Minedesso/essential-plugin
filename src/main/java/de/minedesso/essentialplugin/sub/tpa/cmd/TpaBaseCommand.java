@@ -29,6 +29,6 @@ public class TpaBaseCommand implements CommandExecutor {
         }
 
         subCommand.execute(sender, args);
-        return false;
+        return true;
     }
 }

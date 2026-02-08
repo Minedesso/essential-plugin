@@ -1,18 +1,22 @@
 package de.minedesso.essentialplugin.sub.tpa;
 
 import de.minedesso.essentialplugin.EssentialPlugin;
-import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.sub.tpa.cmd.TpaBaseCommand;
 import de.minedesso.essentialplugin.sub.tpa.cmd.sub.*;
 import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.TpaStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
+import de.minedesso.essentialplugin.sub.tpa.TpaRequestValidator.*;
 
 import java.util.*;
 
-public class TpaService {
+public class TpaService implements Listener {
     private static TpaService instance;
     private static final int REQUEST_TIMEOUT_SECONDS = 90;
 
@@ -28,6 +32,7 @@ public class TpaService {
 
     private TpaService() {
         initializeCommands();
+        registerListener();
     }
 
     private void initializeCommands() {
@@ -40,6 +45,33 @@ public class TpaService {
         ));
 
         EssentialPlugin.getInstance().getCommand("tpa").setExecutor(tpaBaseCommand);
+    }
+
+    private void registerListener() {
+        Bukkit.getPluginManager().registerEvents(this, EssentialPlugin.getInstance());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        // requestSender is leaving
+        if (tpRequests.containsKey(playerId)) {
+            voidRequest(player, TpaStatus.SENDER_DISCONNECT);
+        }
+
+        // requestReciever is leaving
+        List<UUID> incomingRequestList = incomingRequests.get(playerId);
+        if (incomingRequestList != null) {
+            List<UUID> requestsCopy = new ArrayList<>(incomingRequestList);
+            for (UUID senderId : requestsCopy) {
+                Player sender = Bukkit.getPlayer(senderId);
+                if (sender != null) {
+                    voidRequestByTarget(sender, player, TpaStatus.TARGET_DISCONNECT);
+                }
+            }
+        }
     }
 
     public void displayHelp(CommandSender sender) {
@@ -57,21 +89,21 @@ public class TpaService {
     }
 
     public void sendRequest(Player sender, String targetName) {
-        Player target = Bukkit.getPlayer(targetName);
+        ValidationResult result = TpaRequestValidator.validate(
+                ValidationContext.builder()
+                        .sender(sender)
+                        .targetName(targetName)
+                        .checkSelfTarget()
+                        .requireTargetOnline()
+                        .requireNoOutgoingRequest()
+        );
 
-        if (target == null) {
-            throw new DoesNotExistException(Messages.PREFIX.message + "Player " + targetName + " does not exist or is not online!");
-        }
-
-        if (sender.getUniqueId().equals(target.getUniqueId())) {
-            sender.sendMessage(Messages.ERROR.message + "You cannot send a teleport request to yourself!");
+        if (!result.isValid()) {
+            result.sendErrorTo(sender);
             return;
         }
 
-        if (tpRequests.containsKey(sender.getUniqueId())) {
-            sender.sendMessage(Messages.PREFIX.message + "You already have a pending teleport request! Cancel it first with /tpcancel");
-            return;
-        }
+        Player target = result.resolvedTarget;
 
         tpRequests.put(sender.getUniqueId(), target.getUniqueId());
         incomingRequests.computeIfAbsent(target.getUniqueId(), k -> new ArrayList<>()).add(sender.getUniqueId());
@@ -79,58 +111,76 @@ public class TpaService {
         sender.sendMessage(Messages.PREFIX.message + "Teleport request sent to " + target.getName() + ". Request expires in " + REQUEST_TIMEOUT_SECONDS + " seconds.");
         target.sendMessage(Messages.PREFIX.message + sender.getName() + " wants to teleport to you. Use /tpaccept " + sender.getName());
 
+        scheduleRequestTimeout(sender);
+    }
+
+    public void cancelRequest(Player sender) {
+        ValidationResult result = TpaRequestValidator.validate(
+                ValidationContext.builder()
+                        .sender(sender)
+                        .requireOutgoingRequest()
+        );
+
+        if (!result.isValid()) {
+            result.sendErrorTo(sender);
+            return;
+        }
+
+        voidRequest(sender, TpaStatus.CANCELLATION);
+    }
+
+    public void acceptRequest(Player teleportTarget, String acceptedPlayerName) {
+        ValidationResult result = TpaRequestValidator.validate(
+                ValidationContext.builder()
+                        .sender(teleportTarget)
+                        .targetName(acceptedPlayerName)
+                        .requireTargetOnline()
+                        .checkSelfTarget()
+                        .requirePendingRequest()
+        );
+
+        if (!result.isValid()) {
+            result.sendErrorTo(teleportTarget);
+            return;
+        }
+
+        Player tpaSender = result.resolvedTarget;
+
+        tpaSender.teleport(tpaSender.getLocation());
+        tpaSender.playSound(tpaSender.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
+
+        voidRequest(tpaSender, TpaStatus.ACCEPTANCE);
+    }
+
+    public void denyRequest(Player teleportTarget, String deniedPlayerName) {
+        ValidationResult result = TpaRequestValidator.validate(
+                ValidationContext.builder()
+                        .sender(teleportTarget)
+                        .targetName(deniedPlayerName)
+                        .requireTargetOnline()
+                        .checkSelfTarget()
+                        .requirePendingRequest()
+        );
+
+        if (!result.isValid()) {
+            result.sendErrorTo(teleportTarget);
+            return;
+        }
+
+        Player tpaSender = result.resolvedTarget;
+
+        voidRequest(tpaSender, TpaStatus.REFUSAL);
+    }
+
+    private void scheduleRequestTimeout(Player sender) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(EssentialPlugin.getInstance(), () -> {
             if (tpRequests.containsKey(sender.getUniqueId())) {
-                voidRequest(sender, VoidType.EXPIRATION);
+                voidRequest(sender, TpaStatus.EXPIRATION);
             }
         }, REQUEST_TIMEOUT_SECONDS * 20L);
     }
 
-    public void cancelRequest(Player sender) {
-        if (!tpRequests.containsKey(sender.getUniqueId())) {
-            sender.sendMessage(Messages.PREFIX.message + "You have no pending teleportation request!");
-            return;
-        }
-
-        voidRequest(sender, VoidType.CANCELLATION);
-    }
-
-    public void acceptRequest(Player target, String acceptedPlayerName) {
-        Player tpaSender = Bukkit.getPlayer(acceptedPlayerName);
-
-        if (tpaSender == null) {
-            throw new DoesNotExistException(Messages.PREFIX.message + "Player " + acceptedPlayerName + " does not exist or is not online!");
-        }
-
-        UUID senderId = tpaSender.getUniqueId();
-        if (!tpRequests.containsKey(senderId) || !tpRequests.get(senderId).equals(target.getUniqueId())) {
-            target.sendMessage(Messages.PREFIX.message + "You have no pending request from " + acceptedPlayerName + "!");
-            return;
-        }
-
-        tpaSender.teleport(target.getLocation());
-        tpaSender.playSound(tpaSender.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
-
-        voidRequest(tpaSender, VoidType.ACCEPTANCE);
-    }
-
-    public void denyRequest(Player target, String deniedPlayerName) {
-        Player tpaSender = Bukkit.getPlayer(deniedPlayerName);
-
-        if (tpaSender == null) {
-            throw new DoesNotExistException(Messages.PREFIX.message + "Player " + deniedPlayerName + " does not exist or is not online!");
-        }
-
-        UUID senderId = tpaSender.getUniqueId();
-        if (!tpRequests.containsKey(senderId) || !tpRequests.get(senderId).equals(target.getUniqueId())) {
-            target.sendMessage(Messages.PREFIX.message + "You have no pending request from " + deniedPlayerName + "!");
-            return;
-        }
-
-        voidRequest(tpaSender, VoidType.REFUSAL);
-    }
-
-    private void voidRequest(Player sender, VoidType voidType) {
+    private void voidRequest(Player sender, TpaStatus tpaStatus) {
         UUID senderId = sender.getUniqueId();
         UUID targetId = tpRequests.get(senderId);
 
@@ -138,6 +188,23 @@ public class TpaService {
 
         Player target = Bukkit.getPlayer(targetId);
 
+        cleanupRequest(senderId, targetId);
+        notifySender(sender, tpaStatus, target);
+
+        List<UUID> incoming = incomingRequests.get(targetId);
+        int remainingCount = incoming != null ? incoming.size() : 0;
+        notifyTarget(sender, target, tpaStatus, remainingCount);
+    }
+
+    private void voidRequestByTarget(Player sender, Player target, TpaStatus tpaStatus) {
+        UUID senderId = sender.getUniqueId();
+        UUID targetId = target.getUniqueId();
+
+        cleanupRequest(senderId, targetId);
+        notifySender(sender, tpaStatus, target);
+    }
+
+    private void cleanupRequest(UUID senderId, UUID targetId) {
         tpRequests.remove(senderId);
         List<UUID> incoming = incomingRequests.get(targetId);
         if (incoming != null) {
@@ -146,34 +213,48 @@ public class TpaService {
                 incomingRequests.remove(targetId);
             }
         }
+    }
 
-        String senderMessage = switch (voidType) {
-            case EXPIRATION -> "Your teleport request has expired.";
-            case REFUSAL -> "Your teleport request has been denied.";
-            case CANCELLATION -> "Your teleport request has been cancelled successfully.";
-            case ACCEPTANCE -> "Teleporting to " + (target != null ? target.getName() : "player") + "...";
+    private void notifySender(Player sender, TpaStatus tpaStatus, Player target) {
+        String message = switch (tpaStatus) {
+            case EXPIRATION -> "Teleport request expired.";
+            case REFUSAL -> target.getName() + " denied your teleportation request.";
+            case CANCELLATION -> "Teleport request cancelled.";
+            case SENDER_DISCONNECT -> "Teleport request cancelled (you disconnected).";
+            case TARGET_DISCONNECT -> "Your teleport request to " + (target != null ? target.getName() : "player") + " was cancelled (they disconnected).";
+            case ACCEPTANCE -> null;
         };
 
-        String targetMessageSuffix = switch (voidType) {
+        if (message != null) {
+            sender.sendMessage(Messages.PREFIX.message + message);
+        }
+    }
+
+    private void notifyTarget(Player sender, Player target, TpaStatus tpaStatus, int remainingCount) {
+        if (target == null) return;
+
+        String suffix = switch (tpaStatus) {
             case EXPIRATION -> "'s teleport request has expired.";
             case REFUSAL -> "'s teleport request has been denied.";
             case CANCELLATION -> " has cancelled their teleport request.";
-            case ACCEPTANCE -> " has been teleported to you.";
+            case SENDER_DISCONNECT -> " has disconnected. Their teleport request has been cancelled.";
+            case TARGET_DISCONNECT, ACCEPTANCE -> null;
         };
 
-        sender.sendMessage(Messages.PREFIX.message + senderMessage);
-
-        if (target != null) {
-            int remainingCount = incoming != null ? incoming.size() : 0;
-            target.sendMessage(Messages.PREFIX.message + sender.getName() + targetMessageSuffix
+        if (suffix != null) {
+            target.sendMessage(Messages.PREFIX.message + sender.getName() + suffix
                     + " You now have " + remainingCount + " pending request(s).");
         }
     }
 
-    private enum VoidType {
-        EXPIRATION,
-        REFUSAL,
-        CANCELLATION,
-        ACCEPTANCE
+    // access for request validator
+    public boolean hasOutgoingRequest(Player sender) {
+        return tpRequests.containsKey(sender.getUniqueId());
+    }
+
+    public boolean hasPendingRequest(Player tpaSender, Player tpaTarget) {
+        UUID senderId = tpaSender.getUniqueId();
+        return tpRequests.containsKey(senderId) &&
+                tpRequests.get(senderId).equals(tpaTarget.getUniqueId());
     }
 }
