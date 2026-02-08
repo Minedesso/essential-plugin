@@ -22,6 +22,14 @@ public class TpaCancelCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (args.length > 0) {
+            sender.sendMessage(Messages.USAGE.message + "/tpcancel");
+            return;
+        }
+        if (args.length > 0) {
+            sender.sendMessage(Messages.USAGE.message + "/tpcancel");
+            return;
+        }
         TpaService.getInstance().cancelRequest((Player) sender);
     }
 }
