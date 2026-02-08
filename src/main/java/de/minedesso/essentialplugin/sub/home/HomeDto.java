@@ -1,15 +1,17 @@
 package de.minedesso.essentialplugin.sub.home;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.Location;
 
 import java.util.UUID;
 
 @AllArgsConstructor
+@Data
 public class HomeDto {
 
-    UUID ownerUuid;
-    String name;
+    private UUID ownerUuid;
+    private String name;
 
     private String worldName;
     private double x;

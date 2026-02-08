@@ -3,7 +3,7 @@ package de.minedesso.essentialplugin.sub.tpa;
 import de.minedesso.essentialplugin.EssentialPlugin;
 import de.minedesso.essentialplugin.sub.tpa.cmd.TpaBaseCommand;
 import de.minedesso.essentialplugin.sub.tpa.cmd.sub.*;
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.TpaStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -75,7 +75,7 @@ public class TpaService implements Listener {
     }
 
     public void displayHelp(CommandSender sender) {
-        String border = Messages.PREFIX.message + "TP-Help";
+        String border = Message.PREFIX.message + "TP-Help";
 
         StringBuilder help = new StringBuilder(border).append("\n");
         help.append("/tpa <player> - Send a teleportation request to the specified player.\n");
@@ -108,8 +108,8 @@ public class TpaService implements Listener {
         tpRequests.put(sender.getUniqueId(), target.getUniqueId());
         incomingRequests.computeIfAbsent(target.getUniqueId(), k -> new ArrayList<>()).add(sender.getUniqueId());
 
-        sender.sendMessage(Messages.PREFIX.message + "Teleport request sent to " + target.getName() + ". Request expires in " + REQUEST_TIMEOUT_SECONDS + " seconds.");
-        target.sendMessage(Messages.PREFIX.message + sender.getName() + " wants to teleport to you. Use /tpaccept " + sender.getName());
+        sender.sendMessage(Message.PREFIX.message + "Teleport request sent to " + target.getName() + ". Request expires in " + REQUEST_TIMEOUT_SECONDS + " seconds.");
+        target.sendMessage(Message.PREFIX.message + sender.getName() + " wants to teleport to you. Use /tpaccept " + sender.getName());
 
         scheduleRequestTimeout(sender);
     }
@@ -226,7 +226,7 @@ public class TpaService implements Listener {
         };
 
         if (message != null) {
-            sender.sendMessage(Messages.PREFIX.message + message);
+            sender.sendMessage(Message.PREFIX.message + message);
         }
     }
 
@@ -242,7 +242,7 @@ public class TpaService implements Listener {
         };
 
         if (suffix != null) {
-            target.sendMessage(Messages.PREFIX.message + sender.getName() + suffix
+            target.sendMessage(Message.PREFIX.message + sender.getName() + suffix
                     + " You now have " + remainingCount + " pending request(s).");
         }
     }

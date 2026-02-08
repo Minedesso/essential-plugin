@@ -1,9 +1,9 @@
 # Essential Plugin
 
 **Essential-Plugin für das Minecraft-Netzwerk.**  
-Core Essentials plugin used exclusively on the Citybuild server, providing fundamental player features such as 
-warps, TPA, homes, and enderchest access. Acts as a shared utility layer for Citybuild systems, with clean APIs, 
-permission control, and extensible command-based interactions.
+Das Core Essentials-Plugin wird ausschließlich auf dem Citybuild-Server verwendet und bietet grundlegende Spielerfunktionen wie
+Warp, TPA, Homes und Enderchest-Zugriff. Es fungiert als gemeinsame Utility-Ebene für Citybuild-Systeme mit sauberen APIs,
+Berechtigungssteuerung und erweiterbaren kommandobasierten Interaktionen.
 
 ---
 
@@ -17,6 +17,7 @@ permission control, and extensible command-based interactions.
 | `/warps`               | Liste alle Warps auf                 | `(essential.warp.<name>)` | `-`     |
 | `/inv`                 | Zeige das Inventar des Spielers an   | `essential.inv.see`       | `-`     |
 | `/ec`                  | Zeige die Endertruhe des Spielers an | `essential.inv.ec`        | `-`     |
+| `/pay`                 | Bezahle einen anderen Spieler        | `-`                       | `-`     |
 | `/tpa <player>`        | Schickt eine Teleportationsanfrage   |                           | `-`     |
 | `/tpaccept <player>`   | Akzeptiert Teleportationsanfrage     |                           | `-`     |
 | `/tpdeny <player>`     | Lehnt Teleportationsanfrage ab       |                           | `-`     |

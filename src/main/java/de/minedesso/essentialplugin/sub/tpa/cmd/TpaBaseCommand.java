@@ -1,6 +1,6 @@
 package de.minedesso.essentialplugin.sub.tpa.cmd;
 
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,7 +24,7 @@ public class TpaBaseCommand implements CommandExecutor {
         SubCommand subCommand = subCommands.get(label);
 
         if(subCommand.playerOnly() && !(sender instanceof Player)) {
-            sender.sendMessage(Messages.ONLY_PLAYER.message);
+            sender.sendMessage(Message.ONLY_PLAYER.message);
             return true;
         }
 

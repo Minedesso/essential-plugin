@@ -1,15 +1,17 @@
-package de.minedesso.essentialplugin.sub.tpa.cmd.sub;
+package de.minedesso.essentialplugin.sub.home.cmd.sub;
 
 import de.minedesso.essentialplugin.exception.DoesNotExistException;
-import de.minedesso.essentialplugin.sub.tpa.TpaService;
+import de.minedesso.essentialplugin.sub.home.HomeService;
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TpaCommand implements SubCommand {
+public class HomeCommand implements SubCommand {
     @Override
-    public String name() { return "tpa"; }
+    public String name() {
+        return "home";
+    }
 
     @Override
     public String permission() {
@@ -24,14 +26,16 @@ public class TpaCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length != 1) {
-            sender.sendMessage(Message.USAGE.message + "/tpa <name>");
+            sender.sendMessage(Message.USAGE.message + "/home <name>");
             return;
         }
 
+        Player player = (Player) sender;
         try {
-            TpaService.getInstance().sendRequest((Player) sender, args[0]);
+            String homeName = args[0];
+            HomeService.getInstance().teleportToHome(player, homeName);
         } catch (DoesNotExistException e) {
-            sender.sendMessage(e.getMessage());
+            player.sendMessage(Message.PREFIX.message + e.getMessage());
         }
     }
 }

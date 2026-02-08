@@ -13,6 +13,13 @@ commands:
     description: View another player's inventory.
     usage: /inv <player>
     aliases: [ec]
+  home:
+    description: Teleport to your home location.
+    usage: /home
+    aliases: [sethome, delhome, homes]
+  pay:
+    description: Pay another player some money.
+    usage: /pay <player> <amount>
   tpa:
     description: Send a teleportation request to another player.
     usage: /tpa <player>

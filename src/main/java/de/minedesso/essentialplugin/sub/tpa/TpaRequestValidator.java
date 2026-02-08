@@ -1,6 +1,6 @@
 package de.minedesso.essentialplugin.sub.tpa;
 
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -127,7 +127,7 @@ public class TpaRequestValidator {
         }
 
         public String getErrorMessage() {
-            return Messages.PREFIX.message + errorMessage;
+            return Message.PREFIX.message + errorMessage;
         }
 
         public void sendErrorTo(CommandSender sender) {

@@ -2,7 +2,7 @@ package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
 import de.minedesso.essentialplugin.exception.AlreadyExistsException;
 import de.minedesso.essentialplugin.exception.CouldNotCreateException;
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.Permission;
 import de.minedesso.essentialplugin.util.SubCommand;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
@@ -30,7 +30,7 @@ public class WarpsCreateSubCommand implements SubCommand {
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         if(args.length != 1 && args.length != 2) {
-            player.sendMessage(Messages.USAGE.message + "/warps create <warpname> <permission>");
+            player.sendMessage(Message.USAGE.message + "/warps create <warpname> <permission>");
             return;
         }
 
@@ -42,11 +42,11 @@ public class WarpsCreateSubCommand implements SubCommand {
             Location location = player.getLocation();
 
             WarpService.getInstance().createWarp(warpName, permission, location, player);
-            player.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' created successfully.");
+            player.sendMessage(Message.PREFIX.message + "Warp '" + warpName + "' created successfully.");
         } catch (AlreadyExistsException e) {
-            player.sendMessage(Messages.PREFIX.message + e.getMessage());
+            player.sendMessage(Message.PREFIX.message + e.getMessage());
         } catch (CouldNotCreateException e) {
-            player.sendMessage(Messages.ERROR.message + e.getMessage());
+            player.sendMessage(Message.ERROR.message + e.getMessage());
         }
     }
 }

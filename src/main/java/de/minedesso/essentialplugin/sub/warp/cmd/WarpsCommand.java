@@ -1,6 +1,6 @@
 package de.minedesso.essentialplugin.sub.warp.cmd;
 
-import de.minedesso.essentialplugin.util.HandleSubCommand;
+import de.minedesso.essentialplugin.util.HandleSubCommandUtil;
 import de.minedesso.essentialplugin.util.SubCommand;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
 import org.bukkit.command.Command;
@@ -27,6 +27,6 @@ public class WarpsCommand implements CommandExecutor {
         }
 
         SubCommand sub = warpsSubCommands.get(args[0].toLowerCase());
-        return HandleSubCommand.handleSubCommand(sub, sender, label, args);
+        return HandleSubCommandUtil.handleSubCommand(sub, sender, label, args);
     }
 }

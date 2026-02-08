@@ -2,7 +2,7 @@ package de.minedesso.essentialplugin.sub.warp.cmd.warpsSub;
 
 import de.minedesso.essentialplugin.exception.CouldNotDeleteException;
 import de.minedesso.essentialplugin.exception.DoesNotExistException;
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.Permission;
 import de.minedesso.essentialplugin.util.SubCommand;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
@@ -27,7 +27,7 @@ public class WarpsDeleteSubCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length != 1) {
-            sender.sendMessage(Messages.USAGE.message + "/warps delete <warpname>");
+            sender.sendMessage(Message.USAGE.message + "/warps delete <warpname>");
             return;
         }
 
@@ -35,11 +35,11 @@ public class WarpsDeleteSubCommand implements SubCommand {
             String warpName = args[0].toLowerCase();
 
             WarpService.getInstance().deleteWarp(warpName);
-            sender.sendMessage(Messages.PREFIX.message + "Warp '" + warpName + "' deleted successfully.");
+            sender.sendMessage(Message.PREFIX.message + "Warp '" + warpName + "' deleted successfully.");
         } catch (DoesNotExistException e) {
-            sender.sendMessage(Messages.PREFIX.message + e.getMessage());
+            sender.sendMessage(Message.PREFIX.message + e.getMessage());
         } catch (CouldNotDeleteException e) {
-            sender.sendMessage(Messages.ERROR.message + e.getMessage());
+            sender.sendMessage(Message.ERROR.message + e.getMessage());
         }
     }
 }

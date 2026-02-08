@@ -2,7 +2,7 @@ package de.minedesso.essentialplugin.sub.tpa.cmd.sub;
 
 import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
-import de.minedesso.essentialplugin.util.Messages;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class TpAcceptCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(args.length != 1) {
-            sender.sendMessage(Messages.USAGE.message + "/tpaccept <name>");
+            sender.sendMessage(Message.USAGE.message + "/tpaccept <name>");
             return;
         }
 

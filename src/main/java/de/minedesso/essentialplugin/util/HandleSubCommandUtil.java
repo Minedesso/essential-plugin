@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-public class HandleSubCommand {
+public class HandleSubCommandUtil {
 
     public static boolean handleSubCommand(SubCommand sub, CommandSender sender, String label, String[] args) {
         if (sub == null) {
@@ -19,7 +19,7 @@ public class HandleSubCommand {
         }
 
         if (sub.permission() != null && !sender.hasPermission(sub.permission())) {
-            sender.sendMessage(Messages.NO_PERMISSION.message);
+            sender.sendMessage(Message.NO_PERMISSION.message);
             return true;
         }
 

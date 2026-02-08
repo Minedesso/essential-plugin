@@ -1,4 +1,4 @@
-package de.minedesso.essentialplugin.sub.inv.cmd;
+package de.minedesso.essentialplugin.sub.home.cmd;
 
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InvBaseCommand implements CommandExecutor {
+public class HomeBaseCommand implements CommandExecutor {
 
     private final Map<String, SubCommand> subCommands = new HashMap<>();
 
-    public InvBaseCommand(List<SubCommand> subCommands) {
-        subCommands.forEach((subCmd) -> {this.subCommands.put(subCmd.name(), subCmd);});
+    public HomeBaseCommand(List<SubCommand> cmds) {
+        cmds.forEach(cmd -> {subCommands.put(cmd.name(), cmd);});
     }
 
     @Override
@@ -26,19 +26,9 @@ public class InvBaseCommand implements CommandExecutor {
             return true;
         }
 
-        SubCommand sub = subCommands.get(label);
+        SubCommand subCommand = subCommands.get(label);
 
-        if(!player.hasPermission(sub.permission())) {
-            player.sendMessage(Message.NO_PERMISSION.message);
-            return true;
-        }
-
-        if(args.length != 1) {
-            player.sendMessage(Message.USAGE.message + "/" + label + " <player>");
-            return true;
-        }
-
-        sub.execute(sender, args);
+        subCommand.execute(player, args);
         return false;
     }
 }

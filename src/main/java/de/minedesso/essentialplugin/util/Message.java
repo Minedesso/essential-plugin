@@ -1,6 +1,6 @@
 package de.minedesso.essentialplugin.util;
 
-public enum Messages {
+public enum Message {
     PREFIX("§8[§3§lMinedesso§8] §7» "),
     USAGE(PREFIX.message + "§eUsage: "),
     ERROR(PREFIX.message + "§cError: "),
@@ -10,7 +10,7 @@ public enum Messages {
 
     public final String message;
 
-    Messages(String message) {
+    Message(String message) {
         this.message = message;
     }
 }
