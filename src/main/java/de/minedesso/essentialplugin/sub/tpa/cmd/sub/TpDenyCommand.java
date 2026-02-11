@@ -1,6 +1,5 @@
 package de.minedesso.essentialplugin.sub.tpa.cmd.sub;
 
-import de.minedesso.essentialplugin.exception.DoesNotExistException;
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
@@ -28,10 +27,7 @@ public class TpDenyCommand implements SubCommand {
             return;
         }
 
-        try {
-            TpaService.getInstance().denyRequest((Player) sender, args[0]);
-        } catch (DoesNotExistException e) {
-            sender.sendMessage(e.getMessage());
-        }
+        String requestSenderName = args[0];
+        TpaService.getInstance().denyRequest((Player) sender, requestSenderName);
     }
 }

@@ -14,10 +14,10 @@ public class InvService {
     private static InvService instance;
 
     private InvService() {
-        initializeWarpCommands();
+        initializeInvCommands();
     }
 
-    private void initializeWarpCommands() {
+    private void initializeInvCommands() {
         InvBaseCommand baseCmd = new InvBaseCommand(List.of(
                 new InvCommand(),
                 new EnderChestCommand()

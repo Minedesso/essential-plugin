@@ -1,6 +1,7 @@
 package de.minedesso.essentialplugin.sub.tpa.cmd.sub;
 
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
+import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.SubCommand;
 import org.bukkit.command.CommandSender;
 
@@ -21,11 +22,7 @@ public class TpHelpCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length > 0) {
-            sender.sendMessage(Messages.USAGE.message + "/tphelp");
-            return;
-        }
-        if (args.length > 0) {
-            sender.sendMessage(Messages.USAGE.message + "/tphelp");
+            sender.sendMessage(Message.USAGE.message + "/tphelp");
             return;
         }
         TpaService.getInstance().displayHelp(sender);

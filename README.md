@@ -21,7 +21,7 @@ Berechtigungssteuerung und erweiterbaren kommandobasierten Interaktionen.
 | `/tpa <player>`        | Schickt eine Teleportationsanfrage   |                           | `-`     |
 | `/tpaccept <player>`   | Akzeptiert Teleportationsanfrage     |                           | `-`     |
 | `/tpdeny <player>`     | Lehnt Teleportationsanfrage ab       |                           | `-`     |
-| `/tpacancel`           | Zieht Teleportationsanfrage zurück   |                           | `-`     |
+| `/tpcancel`            | Zieht Teleportationsanfrage zurück   |                           | `-`     |
 
 ---
 

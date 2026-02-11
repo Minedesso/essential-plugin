@@ -6,7 +6,7 @@ import de.minedesso.essentialplugin.util.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TpaCancelCommand implements SubCommand {
+public class TpCancelCommand implements SubCommand {
     @Override
     public String name() { return "tpcancel"; }
 
@@ -26,10 +26,6 @@ public class TpaCancelCommand implements SubCommand {
             sender.sendMessage(Message.USAGE.message + "/tpcancel");
             return;
         }
-        if (args.length > 0) {
-            sender.sendMessage(Message.USAGE.message + "/tpcancel");
-            return;
-        }
-        TpaService.getInstance().cancelRequest((Player) sender);
+        TpaService.getInstance().cancelOutgoingRequest((Player) sender);
     }
 }

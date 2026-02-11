@@ -7,44 +7,51 @@ import org.bukkit.entity.Player;
 
 public class TpaRequestValidator {
     public static ValidationResult validate(ValidationContext context) {
+        boolean senderHasOutgoingRequest = TpaService.getInstance().hasOutgoingRequest(context.sender);
+
+        // target cannot be null
+        if(context.target == null && context.targetName == null) {
+            return new ValidationResult(false, "Target has to be specified.");
+        }
+
         // Sender cannot be target
-        if (context.checkSelfTarget && context.sender != null && context.target != null) {
+        if (context.checkSelfTarget) {
             if (context.sender.getUniqueId().equals(context.target.getUniqueId())) {
-                return ValidationResult.error("You as the sender can not be a target on this command.");
+                return new ValidationResult(false,"You as the sender can not be a target on this command.");
             }
         }
 
         // Check if target exists/is online
-        if (context.requireTargetOnline && context.targetName != null) {
+        if (context.requireTargetOnline) {
             Player target = Bukkit.getPlayer(context.targetName);
             if (target == null) {
-                return ValidationResult.error("Player " + context.targetName + " does not exist or is not online!");
+                return new ValidationResult(false, "Player " + context.targetName + " does not exist or is not online!");
             }
             context.target = target;
         }
 
         // Check if sender has outgoing request sender can't have any
-        if (context.requireNoOutgoingRequest && context.sender != null) {
-            if (TpaService.getInstance().hasOutgoingRequest(context.sender)) {
-                return ValidationResult.error("You already have an outgoing teleport request! Cancel it first with /tpcancel");
+        if (context.requireNoOutgoingRequest) {
+            if (senderHasOutgoingRequest) {
+                return new ValidationResult(false, "You already have an outgoing teleport request! Cancel it first with /tpcancel");
             }
         }
 
         // Check if sender has outgoing request sender has to have one
-        if (context.requireOutgoingRequest && context.sender != null) {
-            if (!TpaService.getInstance().hasOutgoingRequest(context.sender)) {
-                return ValidationResult.error("You have no outgoing teleport request!");
+        if (context.requireOutgoingRequest) {
+            if (!senderHasOutgoingRequest) {
+                return new ValidationResult(false, "You have no outgoing teleport request!");
             }
         }
 
         // Check if pending request exists
-        if (context.requirePendingRequest && context.sender != null && context.target != null) {
-            if (!TpaService.getInstance().hasPendingRequest(context.sender, context.target)) {
-                return ValidationResult.error("You have no pending request from " + context.target.getName() + "!");
+        if (context.requirePendingRequest) {
+            if (!TpaService.getInstance().hasRequestFromSenderToReceiver(context.sender, context.target)) {
+                return new ValidationResult(false, "You have no pending request from " + context.target.getName() + "!");
             }
         }
 
-        ValidationResult result = ValidationResult.success();
+        ValidationResult result = new ValidationResult(true, "");
         result.resolvedTarget = context.target;
         return result;
     }
@@ -58,10 +65,6 @@ public class TpaRequestValidator {
         boolean requireNoOutgoingRequest = false;
         boolean requireOutgoingRequest = false;
         boolean requirePendingRequest = false;
-
-        public static ValidationContext builder() {
-            return new ValidationContext();
-        }
 
         public ValidationContext sender(Player sender) {
             this.sender = sender;
@@ -114,16 +117,8 @@ public class TpaRequestValidator {
             this.errorMessage = errorMessage;
         }
 
-        public static ValidationResult success() {
-            return new ValidationResult(true, null);
-        }
-
-        public static ValidationResult error(String message) {
-            return new ValidationResult(false, message);
-        }
-
-        public boolean isValid() {
-            return success;
+        public boolean failed() {
+            return !success;
         }
 
         public String getErrorMessage() {
