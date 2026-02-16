@@ -1,5 +1,7 @@
 package de.minedesso.essentialplugin;
 
+import de.minedesso.essentialplugin.sub.fly.FlyService;
+import de.minedesso.essentialplugin.sub.home.HomeService;
 import de.minedesso.essentialplugin.sub.inv.InvService;
 import de.minedesso.essentialplugin.sub.economy.EconomyService;
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
@@ -36,6 +38,7 @@ public final class EssentialPlugin extends JavaPlugin {
             EconomyService.getInstance();
             HomeService.getInstance();
             TpaService.getInstance();
+            FlyService.getInstance();
         } catch (Exception e) {
             logger.warning("Failed to initialize Service: " + e.getMessage());
         }
