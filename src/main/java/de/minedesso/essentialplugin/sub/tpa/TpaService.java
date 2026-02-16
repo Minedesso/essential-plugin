@@ -3,20 +3,18 @@ package de.minedesso.essentialplugin.sub.tpa;
 import de.minedesso.essentialplugin.EssentialPlugin;
 import de.minedesso.essentialplugin.sub.tpa.cmd.TpaBaseCommand;
 import de.minedesso.essentialplugin.sub.tpa.cmd.sub.*;
+import de.minedesso.essentialplugin.sub.tpa.cmd.validator.TpaRequestValidator;
+import de.minedesso.essentialplugin.sub.tpa.cmd.validator.ValidationContext;
+import de.minedesso.essentialplugin.sub.tpa.cmd.validator.ValidationResult;
 import de.minedesso.essentialplugin.util.Message;
 import de.minedesso.essentialplugin.util.TpaStatus;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
-import de.minedesso.essentialplugin.sub.tpa.TpaRequestValidator.*;
-
 import java.util.*;
 
-public class TpaService implements Listener {
+public class TpaService {
     private static TpaService instance;
     private static final int REQUEST_TIMEOUT_SECONDS = 90;
 
@@ -48,30 +46,8 @@ public class TpaService implements Listener {
     }
 
     private void registerListener() {
-        Bukkit.getPluginManager().registerEvents(this, EssentialPlugin.getInstance());
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        UUID playerId = player.getUniqueId();
-
-        // requestSender is leaving
-        if (tpRequests.containsKey(playerId)) {
-            voidRequest(player, TpaStatus.SENDER_DISCONNECT);
-        }
-
-        // requestReciever is leaving
-        List<UUID> incomingRequestList = incomingRequests.get(playerId);
-        if (incomingRequestList != null) {
-            List<UUID> requestsCopy = new ArrayList<>(incomingRequestList);
-            for (UUID senderId : requestsCopy) {
-                Player sender = Bukkit.getPlayer(senderId);
-                if (sender != null) {
-                    cleanupRequestByTarget(sender, player);
-                }
-            }
-        }
+        TpaEventListener listener = new TpaEventListener(this);
+        Bukkit.getPluginManager().registerEvents(listener, EssentialPlugin.getInstance());
     }
 
     public void displayHelp(CommandSender sender) {
@@ -103,7 +79,7 @@ public class TpaService implements Listener {
             return;
         }
 
-        Player target = result.resolvedTarget;
+        Player target = result.getResolvedPlayer();
 
         tpRequests.put(sender.getUniqueId(), target.getUniqueId());
         incomingRequests.computeIfAbsent(target.getUniqueId(), k -> new ArrayList<>()).add(sender.getUniqueId());
@@ -119,6 +95,7 @@ public class TpaService implements Listener {
         ValidationResult result = TpaRequestValidator.validate(
                 new ValidationContext()
                         .sender(sender)
+                        .targetIsOptional()
                         .requireOutgoingRequest()
         );
 
@@ -145,7 +122,7 @@ public class TpaService implements Listener {
             return;
         }
 
-        Player requestSender = result.resolvedTarget;
+        Player requestSender = result.getResolvedPlayer();
 
         requestSender.teleport(requestReceiver.getLocation());
         requestSender.playSound(requestReceiver.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
@@ -168,7 +145,7 @@ public class TpaService implements Listener {
             return;
         }
 
-        Player tpaSender = result.resolvedTarget;
+        Player tpaSender = result.getResolvedPlayer();
 
         voidRequest(tpaSender, TpaStatus.REFUSAL);
     }
@@ -181,7 +158,7 @@ public class TpaService implements Listener {
         }, REQUEST_TIMEOUT_SECONDS * 20L);
     }
 
-    private void voidRequest(Player sender, TpaStatus tpaStatus) {
+    void voidRequest(Player sender, TpaStatus tpaStatus) {
         UUID senderId = sender.getUniqueId();
         UUID targetId = tpRequests.get(senderId);
 
@@ -195,7 +172,7 @@ public class TpaService implements Listener {
         notifyTarget(sender, target, tpaStatus);
     }
 
-    private void cleanupRequestByTarget(Player sender, Player target) {
+    public void cleanupRequestByTarget(Player sender, Player target) {
         UUID senderId = sender.getUniqueId();
         UUID targetId = target.getUniqueId();
 
@@ -252,5 +229,10 @@ public class TpaService implements Listener {
         UUID senderId = requestSender.getUniqueId();
         return tpRequests.containsKey(senderId) &&
                 tpRequests.get(senderId).equals(requestReceiver.getUniqueId());
+    }
+
+    // Access methods for TpaEventListener
+    public List<UUID> getIncomingRequestSenders(UUID playerUuid) {
+        return incomingRequests.get(playerUuid);
     }
 }
