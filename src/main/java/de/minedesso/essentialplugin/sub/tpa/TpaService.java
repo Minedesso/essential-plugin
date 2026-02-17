@@ -66,12 +66,13 @@ public class TpaService {
 
     public void sendRequest(Player sender, String targetName) {
         ValidationResult result = TpaRequestValidator.validate(
-                new ValidationContext()
+                ValidationContext.builder()
                         .sender(sender)
                         .targetName(targetName)
-                        .checkSelfTarget()
-                        .requireTargetOnline()
-                        .requireNoOutgoingRequest()
+                        .preventSelfTargeting(true)
+                        .requireTargetOnline(true)
+                        .requireNoOutgoingRequest(true)
+                        .build()
         );
 
         if (result.failed()) {
@@ -93,10 +94,11 @@ public class TpaService {
 
     public void cancelOutgoingRequest(Player sender) {
         ValidationResult result = TpaRequestValidator.validate(
-                new ValidationContext()
+                ValidationContext.builder()
                         .sender(sender)
-                        .targetIsOptional()
-                        .requireOutgoingRequest()
+                        .targetRequired(false)
+                        .requireOutgoingRequest(true)
+                        .build()
         );
 
         if (result.failed()) {
@@ -109,12 +111,13 @@ public class TpaService {
 
     public void acceptRequest(Player requestReceiver, String requestSenderName) {
         ValidationResult result = TpaRequestValidator.validate(
-                new ValidationContext()
+                ValidationContext.builder()
                         .sender(requestReceiver)
                         .targetName(requestSenderName)
-                        .requireTargetOnline()
-                        .checkSelfTarget()
-                        .requirePendingRequest()
+                        .requireTargetOnline(true)
+                        .preventSelfTargeting(true)
+                        .requirePendingRequest(true)
+                        .build()
         );
 
         if (result.failed()) {
@@ -132,12 +135,13 @@ public class TpaService {
 
     public void denyRequest(Player requestReceiver, String requestSenderName) {
         ValidationResult result = TpaRequestValidator.validate(
-                new ValidationContext()
+                ValidationContext.builder()
                         .sender(requestReceiver)
                         .targetName(requestSenderName)
-                        .requireTargetOnline()
-                        .checkSelfTarget()
-                        .requirePendingRequest()
+                        .requireTargetOnline(true)
+                        .preventSelfTargeting(true)
+                        .requirePendingRequest(true)
+                        .build()
         );
 
         if (result.failed()) {
@@ -167,9 +171,13 @@ public class TpaService {
         Player target = Bukkit.getPlayer(targetId);
 
         cleanupRequest(senderId, targetId);
-        notifySender(sender, tpaStatus, target);
+        if (sender.isOnline()) {
+            notifySender(sender, tpaStatus, target);
+        }
 
-        notifyTarget(sender, target, tpaStatus);
+        if (target != null && target.isOnline()) {
+            notifyTarget(sender, target, tpaStatus);
+        }
     }
 
     public void cleanupRequestByTarget(Player sender, Player target) {
@@ -196,7 +204,8 @@ public class TpaService {
             case EXPIRATION -> "Teleport request expired.";
             case REFUSAL -> target.getName() + " denied your teleportation request.";
             case CANCELLATION -> "Teleport request cancelled.";
-            case TARGET_DISCONNECT -> "Your teleport request to " + (target != null ? target.getName() : "player") + " was cancelled (they disconnected).";
+            case TARGET_DISCONNECT ->
+                    "Your teleport request to " + (target != null ? target.getName() : "player") + " was cancelled (they disconnected).";
             case ACCEPTANCE, SENDER_DISCONNECT -> null;
         };
 
@@ -232,7 +241,26 @@ public class TpaService {
     }
 
     // Access methods for TpaEventListener
-    public List<UUID> getIncomingRequestSenders(UUID playerUuid) {
-        return incomingRequests.get(playerUuid);
+    public void handleSenderDisconnect(Player disconnectedPlayer) {
+        boolean playerSentRequest = hasOutgoingRequest(disconnectedPlayer);
+        if (playerSentRequest) {
+            voidRequest(disconnectedPlayer, TpaStatus.SENDER_DISCONNECT);
+        }
+    }
+
+    public void handleReceiverDisconnect(Player disconnectedPlayer, UUID disconnectedPlayerId) {
+        List<UUID> sendersWhoRequestedThisPlayer = incomingRequests.get(disconnectedPlayerId);
+
+        if (sendersWhoRequestedThisPlayer == null || sendersWhoRequestedThisPlayer.isEmpty()) {
+            return;
+        }
+
+        List<UUID> senderIdsCopy = new ArrayList<>(sendersWhoRequestedThisPlayer);
+        for (UUID senderId : senderIdsCopy) {
+            Player requestSender = Bukkit.getPlayer(senderId);
+            if (requestSender != null) {
+                cleanupRequestByTarget(requestSender, disconnectedPlayer);
+            }
+        }
     }
 }

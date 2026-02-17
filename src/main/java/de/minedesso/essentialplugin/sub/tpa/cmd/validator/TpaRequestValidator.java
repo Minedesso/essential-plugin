@@ -1,12 +1,14 @@
 package de.minedesso.essentialplugin.sub.tpa.cmd.validator;
 
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
+import lombok.experimental.UtilityClass;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+@UtilityClass
 public class TpaRequestValidator {
 
-    public static ValidationResult validate(ValidationContext context) {
+    public ValidationResult validate(ValidationContext context) {
         if (!isSenderValid(context)) {
             return ValidationResult.error("Something went wrong executing this command!");
         }
@@ -15,11 +17,11 @@ public class TpaRequestValidator {
             return ValidationResult.error("Target has to be specified.");
         }
 
-        if (context.shouldPreventSelfTargeting() && isSelfTargeting(context)) {
-            return ValidationResult.error("You cannot send a teleport request to yourself.");
+        if (context.isPreventSelfTargeting() && isSelfTargeting(context)) {
+            return ValidationResult.error("You cannot perform a teleport action on yourself.");
         }
 
-        if (context.requiresTargetOnline()) {
+        if (context.isRequireTargetOnline()) {
             Player onlineTarget = findOnlinePlayer(context.getTargetName());
             if (onlineTarget == null) {
                 return ValidationResult.error("Player " + context.getTargetName() + " does not exist or is not online!");
@@ -29,15 +31,15 @@ public class TpaRequestValidator {
 
         boolean hasOutgoingRequest = TpaService.getInstance().hasOutgoingRequest(context.getSender());
 
-        if (context.requiresNoOutgoingRequest() && hasOutgoingRequest) {
+        if (context.isRequireNoOutgoingRequest() && hasOutgoingRequest) {
             return ValidationResult.error("You already have an outgoing teleport request! Cancel it first with /tpcancel");
         }
 
-        if (context.requiresOutgoingRequest() && !hasOutgoingRequest) {
+        if (context.isRequireOutgoingRequest() && !hasOutgoingRequest) {
             return ValidationResult.error("You have no outgoing teleport request!");
         }
 
-        if (context.requiresPendingRequest()) {
+        if (context.isRequirePendingRequest()) {
             boolean hasPendingRequest = TpaService.getInstance().hasRequestFromSenderToReceiver(
                     context.getTarget(),
                     context.getSender()
@@ -50,20 +52,24 @@ public class TpaRequestValidator {
         return ValidationResult.success(context.getTarget());
     }
 
-    private static boolean isSenderValid(ValidationContext context) {
+    private boolean isSenderValid(ValidationContext context) {
         return context.getSender() != null;
     }
 
-    private static boolean isTargetSpecified(ValidationContext context) {
+    private boolean isTargetSpecified(ValidationContext context) {
         return context.getTarget() != null || context.getTargetName() != null;
     }
 
-    private static boolean isSelfTargeting(ValidationContext context) {
-        return context.getTarget() != null &&
-                context.getSender().getName().equals(context.getTargetName());
+    private boolean isSelfTargeting(ValidationContext context) {
+        if (context.getTarget() != null) {
+            return context.getSender().getName().equals(context.getTarget().getName());
+        }
+        // If target is not resolved yet, compare sender name with target name
+        return context.getTargetName() != null &&
+                context.getSender().getName().equalsIgnoreCase(context.getTargetName());
     }
 
-    private static Player findOnlinePlayer(String playerName) {
+    private Player findOnlinePlayer(String playerName) {
         return Bukkit.getPlayer(playerName);
     }
 }
