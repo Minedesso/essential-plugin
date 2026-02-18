@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
-// TODO: Refactor to PlayerQuitListener and inject multiple services if reused?
 public class TpaEventListener implements Listener {
     private final TpaService tpaService;
 
