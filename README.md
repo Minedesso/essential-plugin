@@ -18,6 +18,10 @@ Berechtigungssteuerung und erweiterbaren kommandobasierten Interaktionen.
 | `/inv`                 | Zeige das Inventar des Spielers an   | `essential.inv.see`       | `-`     |
 | `/ec`                  | Zeige die Endertruhe des Spielers an | `essential.inv.ec`        | `-`     |
 | `/pay`                 | Bezahle einen anderen Spieler        | `-`                       | `-`     |
+| `/tpa <player>`        | Schickt eine Teleportationsanfrage   |                           | `-`     |
+| `/tpaccept <player>`   | Akzeptiert Teleportationsanfrage     |                           | `-`     |
+| `/tpdeny <player>`     | Lehnt Teleportationsanfrage ab       |                           | `-`     |
+| `/tpcancel`            | Zieht Teleportationsanfrage zurück   |                           | `-`     |
 
 ---
 

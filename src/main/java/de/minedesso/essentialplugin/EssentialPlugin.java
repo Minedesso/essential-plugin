@@ -2,7 +2,9 @@ package de.minedesso.essentialplugin;
 
 import de.minedesso.essentialplugin.sub.inv.InvService;
 import de.minedesso.essentialplugin.sub.economy.EconomyService;
+import de.minedesso.essentialplugin.sub.tpa.TpaService;
 import de.minedesso.essentialplugin.sub.warp.WarpService;
+import de.minedesso.essentialplugin.sub.home.HomeService;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,13 +29,15 @@ public final class EssentialPlugin extends JavaPlugin {
     }
 
     private void initializeSubEssentials() {
-        // Ensure WarpService initializes without relying on commands being present in plugin.yml
+        // Ensure Services initialize without relying on commands being present in plugin.yml
         try {
             WarpService.getInstance();
             InvService.getInstance();
             EconomyService.getInstance();
+            HomeService.getInstance();
+            TpaService.getInstance();
         } catch (Exception e) {
-            logger.warning("Failed to initialize WarpService: " + e.getMessage());
+            logger.warning("Failed to initialize Service: " + e.getMessage());
         }
     }
 }

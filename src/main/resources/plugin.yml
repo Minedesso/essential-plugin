@@ -20,3 +20,7 @@ commands:
   pay:
     description: Pay another player some money.
     usage: /pay <player> <amount>
+  tpa:
+    description: Send a teleportation request to another player.
+    usage: /tpa <player>
+    aliases: [tpaccept, tpdeny, tpcancel, tphelp]

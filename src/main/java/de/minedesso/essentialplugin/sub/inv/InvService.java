@@ -13,8 +13,11 @@ public class InvService {
 
     private static InvService instance;
 
+    private InvService() {
+        initializeInvCommands();
+    }
 
-    private void initializeWarpCommands() {
+    private void initializeInvCommands() {
         InvBaseCommand baseCmd = new InvBaseCommand(List.of(
                 new InvCommand(),
                 new EnderChestCommand()
@@ -24,10 +27,6 @@ public class InvService {
         if (plugin.getCommand("inv") != null) {
             plugin.getCommand("inv").setExecutor(baseCmd);
         }
-    }
-
-    private InvService() {
-        initializeWarpCommands();
     }
 
     public static InvService getInstance() {
