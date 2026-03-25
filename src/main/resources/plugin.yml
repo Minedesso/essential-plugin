@@ -24,3 +24,6 @@ commands:
     description: Send a teleportation request to another player.
     usage: /tpa <player>
     aliases: [tpaccept, tpdeny, tpcancel, tphelp]
+  fly:
+    description: Toggle fly mode.
+    usage: /fly <player>
