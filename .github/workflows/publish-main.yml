@@ -1,6 +1,7 @@
 name: Release on Main Push
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -17,14 +18,15 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '26'
 
       - name: Build with Maven
         run: mvn clean package
 
       - name: Get version from pom.xml
         id: get_version
-        run: echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+        run: |
+          echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
