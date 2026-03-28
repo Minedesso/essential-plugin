@@ -2,17 +2,17 @@ package de.minedesso.essentialplugin.sub.economy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.minedesso.essentialplugin.sub.economy.dto.PayDto;
-import de.minedesso.essentialplugin.sub.economy.dto.PayOfflineDto;
-import de.minedesso.essentialplugin.sub.economy.dto.PayResponse;
+import de.minedesso.essentialplugin.sub.economy.dto.in.balance.BalanceDto;
+import de.minedesso.essentialplugin.sub.economy.dto.out.pay.PayDto;
+import de.minedesso.essentialplugin.sub.economy.dto.out.pay.PayOfflineDto;
+import de.minedesso.essentialplugin.sub.economy.dto.out.balance.SetMoneyFlowBalanceOfflineCommand;
+import de.minedesso.essentialplugin.sub.economy.dto.out.balance.SetMoneyFlowBalanceOnlineCommand;
+import de.minedesso.essentialplugin.sub.economy.dto.transaction.TransactionResponse;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.UUID;
 
 public class EconomyApi {
@@ -39,7 +39,7 @@ public class EconomyApi {
         this.apiUrl = env != null && !env.isBlank() ? env : "http://localhost:8080/api";
     }
 
-    public PayResponse pay(PayDto payDto) {
+    public TransactionResponse pay(PayDto payDto) {
         try {
             String json = objectMapper.writeValueAsString(payDto);
 
@@ -53,13 +53,13 @@ public class EconomyApi {
             return getPayResponse(request);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            return PayResponse.ERROR;
+            return TransactionResponse.ERROR;
         } catch (Exception e) {
-            return PayResponse.ERROR;
+            return TransactionResponse.ERROR;
         }
     }
 
-    public PayResponse payOfflinePlayer(PayOfflineDto payOfflineDto) {
+    public TransactionResponse payOfflinePlayer(PayOfflineDto payOfflineDto) {
         try {
             String json = objectMapper.writeValueAsString(payOfflineDto);
 
@@ -73,21 +73,99 @@ public class EconomyApi {
             return getPayResponse(request);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
-            return PayResponse.ERROR;
+            return TransactionResponse.ERROR;
         } catch (Exception e) {
-            return PayResponse.ERROR;
+            return TransactionResponse.ERROR;
         }
     }
 
-    private PayResponse getPayResponse(HttpRequest request) throws java.io.IOException, InterruptedException {
+    public BalanceDto getBalance(UUID ownerUuid) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl + "/money-flow/balance/" + ownerUuid))
+                    .header(HEADER_ACCEPT, APPLICATION_JSON)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+
+            if (status == 200) {
+                return objectMapper.readValue(response.body(), BalanceDto.class);
+            }
+            return null;
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public TransactionResponse setBalanceOnline(SetMoneyFlowBalanceOnlineCommand command) {
+        try {
+            String json = objectMapper.writeValueAsString(command);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl + "/money-flow/balance"))
+                    .header(HEADER_CONTENT_TYPE, APPLICATION_JSON)
+                    .header(HEADER_ACCEPT, APPLICATION_JSON)
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+
+            return switch (status) {
+                case 200, 201 -> TransactionResponse.SUCCESS;
+                case 409 -> TransactionResponse.INSUFFICIENT_FUNDS;
+                default -> TransactionResponse.ERROR;
+            };
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            return TransactionResponse.ERROR;
+        } catch (Exception e) {
+            return TransactionResponse.ERROR;
+        }
+    }
+
+    public TransactionResponse setBalanceOffline(SetMoneyFlowBalanceOfflineCommand command) {
+        try {
+            String json = objectMapper.writeValueAsString(command);
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl + "/money-flow/balance/offline"))
+                    .header(HEADER_CONTENT_TYPE, APPLICATION_JSON)
+                    .header(HEADER_ACCEPT, APPLICATION_JSON)
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            int status = response.statusCode();
+
+            return switch (status) {
+                case 200, 201 -> TransactionResponse.SUCCESS;
+                case 404 -> TransactionResponse.RECEIVER_NOT_FOUND;
+                case 409 -> TransactionResponse.INSUFFICIENT_FUNDS;
+                default -> TransactionResponse.ERROR;
+            };
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            return TransactionResponse.ERROR;
+        } catch (Exception e) {
+            return TransactionResponse.ERROR;
+        }
+    }
+
+    private TransactionResponse getPayResponse(HttpRequest request) throws java.io.IOException, InterruptedException {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
 
         return switch (status) {
-            case 200, 201 -> PayResponse.SUCCESS;
-            case 409 -> PayResponse.INSUFFICIENT_FUNDS;
-            case 404 -> PayResponse.RECEIVER_NOT_FOUND;
-            default -> PayResponse.ERROR;
+            case 200, 201 -> TransactionResponse.SUCCESS;
+            case 409 -> TransactionResponse.INSUFFICIENT_FUNDS;
+            case 404 -> TransactionResponse.RECEIVER_NOT_FOUND;
+            default -> TransactionResponse.ERROR;
         };
     }
 }

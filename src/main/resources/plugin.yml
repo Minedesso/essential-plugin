@@ -20,6 +20,10 @@ commands:
   pay:
     description: Pay another player some money.
     usage: /pay <player> <amount>
+  money:
+    description: View or set player balances.
+    usage: /money [player] | /money set <player> <amount>
+    aliases: [balance]
   tpa:
     description: Send a teleportation request to another player.
     usage: /tpa <player>

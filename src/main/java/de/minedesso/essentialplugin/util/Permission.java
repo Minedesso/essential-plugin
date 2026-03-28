@@ -13,7 +13,12 @@ public enum Permission {
     INV_EC(INV_BASE.perm + "ec"),
 
     HOME_BASE(ESSENTIAL_BASE.perm + "home."),
-    HOME_COUNT(HOME_BASE.perm + "count.");
+    HOME_COUNT(HOME_BASE.perm + "count."),
+
+    MONEY_BASE(ESSENTIAL_BASE.perm + "money."),
+    MONEY_VIEW(MONEY_BASE.perm + "view"),
+    MONEY_VIEW_OTHERS(MONEY_BASE.perm + "others"),
+    MONEY_ADMIN(MONEY_BASE.perm + "admin");
 
     public final String perm;
 

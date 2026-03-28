@@ -1,4 +1,4 @@
-package de.minedesso.essentialplugin.sub.economy.cmd;
+package de.minedesso.essentialplugin.sub.economy.cmd.pay;
 
 import de.minedesso.essentialplugin.exception.InvalidAmountException;
 import de.minedesso.essentialplugin.sub.economy.EconomyService;
