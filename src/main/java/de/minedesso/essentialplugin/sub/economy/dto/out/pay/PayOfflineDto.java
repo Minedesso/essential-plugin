@@ -1,5 +1,6 @@
-package de.minedesso.essentialplugin.sub.economy.dto;
+package de.minedesso.essentialplugin.sub.economy.dto.out.pay;
 
+import de.minedesso.essentialplugin.sub.economy.dto.transaction.TransactionContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
