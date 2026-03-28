@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - verify-build
 
 jobs:
   build-and-release:
