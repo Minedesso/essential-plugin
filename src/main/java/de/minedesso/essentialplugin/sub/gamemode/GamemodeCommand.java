@@ -15,8 +15,8 @@ public class GamemodeCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            GamemodeService.getInstance().handleGamemodeCommand(player, player, args);
-            return false;
+            //GamemodeService.getInstance().handleGamemodeCommand(player, player, args);
+            //return false;
 
         } else if (args.length == 1) {
             Player target = player.getServer().getPlayer(args[0]);

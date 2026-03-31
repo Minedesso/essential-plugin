@@ -21,18 +21,20 @@ public class GamemodeService {
     }
 
     public void handleGamemodeCommand(Player sender, Player target, String[] args) {
-        GameMode gamemodeSet = target.getGameMode();
-        if(args[0] == "survival") {
+        if(args[0].equalsIgnoreCase("survival")) {
             target.setGameMode(GameMode.SURVIVAL);
             target.sendMessage(Message.PREFIX.message + getGamemodeStatusMessage(gamemodeSet));
-
-        } else if (args[0] == "creative") {
+            //Nur 1x am Ende die Nachricht ausgeben
+            //auf den Gamemode Konstruktor gucken
+            // switch case
+        } else if (args[0].equalsIgnoreCase("creative")) {
             target.setGameMode(GameMode.CREATIVE);
 
-        } else if (args[0] == "adventure") {
+        } else if (args[0].equalsIgnoreCase("adventure")) {
             target.setGameMode(GameMode.ADVENTURE);
 
-        } else if (args[0] == "spectator") {
+        } else if (args[0].equalsIgnoreCase("spectator")) {
+            //gamemode string in eine constant auslagern
             target.setGameMode(GameMode.SPECTATOR);
 
         }
@@ -40,17 +42,17 @@ public class GamemodeService {
 
     private String getGamemodeStatusMessage(GameMode gamemodeSet) {
         if (gamemodeSet == GameMode.SURVIVAL) {
-            return "Gamemode &aSurvival&7";
+            return "Gamemode §aSurvival§7";
 
         } else if (gamemodeSet == GameMode.CREATIVE){
-            return "Gamemode &aCreative&7";
+            return "Gamemode §aCreative§7";
 
         } else if (gamemodeSet == GameMode.ADVENTURE) {
-            return "Gamemode &aAdventure&7";
+            return "Gamemode §aAdventure§7";
 
         } else {
 
-            return "Gamemode &aSpectator&7";
+            return "Gamemode §aSpectator§7";
 
         }
     }
