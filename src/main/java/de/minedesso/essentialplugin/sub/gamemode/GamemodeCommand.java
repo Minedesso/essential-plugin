@@ -14,24 +14,24 @@ public class GamemodeCommand implements CommandExecutor {
             return false;
         }
 
-        if (args.length == 0) {
-            //GamemodeService.getInstance().handleGamemodeCommand(player, player, args);
-            //return false;
-
-        } else if (args.length == 1) {
-            Player target = player.getServer().getPlayer(args[0]);
-
-        } else if (args.length == 2) {
-            Player target = player.getServer().getPlayer(args[1]);
-
-            if (target == null) {
-                player.sendMessage(Message.PLAYER_NOT_FOUND.message);
-                return false;
+        Player target = null;
+        switch(args.length) {
+            case 0 -> {
+                //error message "invalid arguments";
             }
+            case 1 -> {
+                target = player.getServer().getPlayer(sender.getName());
+            }
+            case 2 -> {
+                target = player.getServer().getPlayer(args[1]);
 
-            GamemodeService.getInstance().handleGamemodeCommand(player, target, args);
-            return false;
+            }
         }
+
+        if(target != null) {
+            GamemodeService.getInstance().handleGamemodeCommand(player, target, args);
+        }
+
         return false;
     }
 }

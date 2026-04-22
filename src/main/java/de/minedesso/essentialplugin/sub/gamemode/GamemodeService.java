@@ -21,40 +21,22 @@ public class GamemodeService {
     }
 
     public void handleGamemodeCommand(Player sender, Player target, String[] args) {
-        if(args[0].equalsIgnoreCase("survival")) {
-            target.setGameMode(GameMode.SURVIVAL);
-            target.sendMessage(Message.PREFIX.message + getGamemodeStatusMessage(gamemodeSet));
-            //Nur 1x am Ende die Nachricht ausgeben
-            //auf den Gamemode Konstruktor gucken
-            // switch case
-        } else if (args[0].equalsIgnoreCase("creative")) {
-            target.setGameMode(GameMode.CREATIVE);
-
-        } else if (args[0].equalsIgnoreCase("adventure")) {
-            target.setGameMode(GameMode.ADVENTURE);
-
-        } else if (args[0].equalsIgnoreCase("spectator")) {
-            //gamemode string in eine constant auslagern
-            target.setGameMode(GameMode.SPECTATOR);
-
+        switch(args[0]) {
+            case "0", "Survival" -> target.setGameMode(GameMode.SURVIVAL);
+            case "1", "Creative" -> target.setGameMode(GameMode.CREATIVE);
+            case "2", "Adventure" -> target.setGameMode(GameMode.ADVENTURE);
+            case "3", "Spectator" -> target.setGameMode(GameMode.SPECTATOR);
         }
+        target.sendMessage(Message.PREFIX.message + getGamemodeStatusMessage(args[0]));
     }
 
-    private String getGamemodeStatusMessage(GameMode gamemodeSet) {
-        if (gamemodeSet == GameMode.SURVIVAL) {
-            return "Gamemode §aSurvival§7";
-
-        } else if (gamemodeSet == GameMode.CREATIVE){
-            return "Gamemode §aCreative§7";
-
-        } else if (gamemodeSet == GameMode.ADVENTURE) {
-            return "Gamemode §aAdventure§7";
-
-        } else {
-
-            return "Gamemode §aSpectator§7";
-
-        }
+    private String getGamemodeStatusMessage(String gamemodeSet) {
+        return switch(gamemodeSet) {
+            case "0", "Survival" -> "Gamemode §aSurvival§7";
+            case "1", "Creative" -> "Gamemode §aCreative§7";
+            case "2", "Adventure" -> "Gamemode §aAdventure§7";
+            case "3", "Spectator" -> "Gamemode §aSpectator§7";
+        };
     }
 
 }
