@@ -2,6 +2,7 @@ package de.minedesso.essentialplugin;
 
 import de.minedesso.essentialplugin.sub.economy.EconomyService;
 import de.minedesso.essentialplugin.sub.fly.FlyService;
+import de.minedesso.essentialplugin.sub.gamemode.GamemodeService;
 import de.minedesso.essentialplugin.sub.home.HomeService;
 import de.minedesso.essentialplugin.sub.inv.InvService;
 import de.minedesso.essentialplugin.sub.tpa.TpaService;
@@ -32,6 +33,7 @@ public final class EssentialPlugin extends JavaPlugin {
     private void initializeSubEssentials() {
         // Ensure Services initialize without relying on commands being present in plugin.yml
         try {
+            GamemodeService.getInstance();
             WarpService.getInstance();
             InvService.getInstance();
             EconomyService.getInstance();
