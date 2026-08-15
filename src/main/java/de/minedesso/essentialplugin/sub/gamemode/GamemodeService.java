@@ -20,23 +20,17 @@ public class GamemodeService {
         EssentialPlugin.getInstance().getCommand("gamemode").setExecutor(new GamemodeCommand());
     }
 
-    public void handleGamemodeCommand(Player sender, Player target, String[] args) {
-        switch(args[0]) {
-            case "0", "Survival" -> target.setGameMode(GameMode.SURVIVAL);
-            case "1", "Creative" -> target.setGameMode(GameMode.CREATIVE);
-            case "2", "Adventure" -> target.setGameMode(GameMode.ADVENTURE);
-            case "3", "Spectator" -> target.setGameMode(GameMode.SPECTATOR);
-        }
-        target.sendMessage(Message.PREFIX.message + getGamemodeStatusMessage(args[0]));
+    public void handleGamemodeCommand(Player sender, Player target, GameMode gamemode) {
+        target.setGameMode(gamemode);
+
+        target.sendMessage(Message.PREFIX.message + "Gamemode set to " + gamemode + ".");
+        sender.sendMessage(Message.PREFIX.message + "Changed gamemode of §a" + target.getName() + " §7to §a" + gamemode);
     }
 
-    private String getGamemodeStatusMessage(String gamemodeSet) {
-        return switch(gamemodeSet) {
-            case "0", "Survival" -> "Gamemode §aSurvival§7";
-            case "1", "Creative" -> "Gamemode §aCreative§7";
-            case "2", "Adventure" -> "Gamemode §aAdventure§7";
-            case "3", "Spectator" -> "Gamemode §aSpectator§7";
-        };
+    public void handleGamemodeCommand(Player sender, GameMode gameMode) {
+        sender.setGameMode(gameMode);
+
+        sender.sendMessage(Message.PREFIX.message + "Gamemode set to " + gameMode + ".");
     }
 
 }

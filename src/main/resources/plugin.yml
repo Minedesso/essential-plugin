@@ -27,3 +27,7 @@ commands:
   fly:
     description: Toggle fly mode.
     usage: /fly <player>
+  gamemode:
+    description: Change your game mode.
+    usage: /gamemode <mode> [player]
+    aliases: [gm]
